@@ -1,0 +1,142 @@
+<view class="page-plain settings-page">
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+
+  <view class="settings-nav">
+    <view class="nav-back" bindtap="goBack">
+      <image src="/assets/icons/chevron-left.svg" />
+    </view>
+    <text class="settings-nav-title">设置</text>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <view class="settings-head">
+    <text class="eyebrow">PREFERENCES</text>
+    <view class="settings-title-row">
+      <text class="settings-title">设置</text>
+      <text class="settings-dot">.</text>
+    </view>
+    <text class="settings-sub">把宿达，调成你喜欢的样子</text>
+  </view>
+
+  <view class="profile-strip">
+    <view class="profile-avatar">满</view>
+    <view class="profile-copy">
+      <text class="profile-name">林小满</text>
+      <text class="profile-meta">青禾大学 · 已认证</text>
+    </view>
+    <view class="profile-badge">SUDA PRO</view>
+  </view>
+
+  <view class="settings-group">
+    <view class="group-label">消息与通知</view>
+    <view class="group-card">
+      <view class="setting-row">
+        <view class="setting-icon lime-bg">
+          <image src="/assets/icons/bell.svg" />
+        </view>
+        <view class="setting-copy">
+          <text class="setting-name">订单通知</text>
+          <text class="setting-desc">骑手接单、送达提醒</text>
+        </view>
+        <switch checked="{{notify}}" color="#b9e83e" data-field="notify" bindchange="toggle" />
+      </view>
+      <view class="row-line"></view>
+      <view class="setting-row">
+        <view class="setting-icon peach-bg">
+          <image src="/assets/icons/message.svg" />
+        </view>
+        <view class="setting-copy">
+          <text class="setting-name">声音与振动</text>
+          <text class="setting-desc">新消息提示音</text>
+        </view>
+        <switch checked="{{sound}}" color="#b9e83e" data-field="sound" bindchange="toggle" />
+      </view>
+      <view class="row-line"></view>
+      <view class="setting-row">
+        <view class="setting-icon mint-bg">
+          <image src="/assets/icons/leaf.svg" />
+        </view>
+        <view class="setting-copy">
+          <text class="setting-name">个性化推荐</text>
+          <text class="setting-desc">根据口味推荐店铺</text>
+        </view>
+        <switch checked="{{personalized}}" color="#b9e83e" data-field="personalized" bindchange="toggle" />
+      </view>
+    </view>
+  </view>
+
+  <view class="settings-group">
+    <view class="group-label">隐私与通用</view>
+    <view class="group-card">
+      <view class="setting-row">
+        <view class="setting-icon lime-bg">
+          <image src="/assets/icons/pin.svg" />
+        </view>
+        <view class="setting-copy">
+          <text class="setting-name">位置权限</text>
+          <text class="setting-desc">用于推荐附近的校园好味</text>
+        </view>
+        <switch checked="{{location}}" color="#b9e83e" data-field="location" bindchange="toggle" />
+      </view>
+      <view class="row-line"></view>
+      <view class="setting-row" bindtap="clearCache">
+        <view class="setting-icon sand-bg">
+          <image src="/assets/icons/trash.svg" />
+        </view>
+        <view class="setting-copy">
+          <text class="setting-name">清除缓存</text>
+          <text class="setting-desc">搜索记录与临时文件</text>
+        </view>
+        <text class="setting-value">{{cacheSize}}</text>
+        <image class="row-arrow" src="/assets/icons/chevron-right.svg" />
+      </view>
+      <view class="row-line"></view>
+      <view class="setting-row" bindtap="showAgreement">
+        <view class="setting-icon rose-bg">
+          <image src="/assets/icons/shield.svg" />
+        </view>
+        <view class="setting-copy">
+          <text class="setting-name">服务协议与隐私</text>
+          <text class="setting-desc">我们如何保护你的数据</text>
+        </view>
+        <image class="row-arrow" src="/assets/icons/chevron-right.svg" />
+      </view>
+    </view>
+  </view>
+
+  <view class="settings-group">
+    <view class="group-label">关于</view>
+    <view class="group-card">
+      <view class="setting-row" bindtap="contactService">
+        <view class="setting-icon mint-bg">
+          <image src="/assets/icons/headset.svg" />
+        </view>
+        <view class="setting-copy">
+          <text class="setting-name">联系客服</text>
+          <text class="setting-desc">每天 08:00 - 24:00 在线</text>
+        </view>
+        <image class="row-arrow" src="/assets/icons/chevron-right.svg" />
+      </view>
+      <view class="row-line"></view>
+      <view class="setting-row" bindtap="showAbout">
+        <view class="setting-icon lime-bg">
+          <image src="/assets/icons/spark.svg" />
+        </view>
+        <view class="setting-copy">
+          <text class="setting-name">关于校园宿达</text>
+          <text class="setting-desc">SUDA CAMPUS</text>
+        </view>
+        <text class="setting-value">1.0.0</text>
+        <image class="row-arrow" src="/assets/icons/chevron-right.svg" />
+      </view>
+    </view>
+  </view>
+
+  <view class="logout-btn" bindtap="logout">退出登录</view>
+
+  <view class="settings-foot">
+    <view class="brand-badge">宿</view>
+    <text>校园宿达 · 把好吃的送到楼下</text>
+    <text>MADE FOR CAMPUS · 2026</text>
+  </view>
+</view>

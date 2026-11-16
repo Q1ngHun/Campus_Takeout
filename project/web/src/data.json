@@ -1,0 +1,920 @@
+{
+  "categories": [
+    {
+      "id": "all",
+      "name": "全部好味",
+      "icon": "cat-all",
+      "tone": "lime"
+    },
+    {
+      "id": "meal",
+      "name": "快餐主食",
+      "icon": "cat-meal",
+      "tone": "sand"
+    },
+    {
+      "id": "drink",
+      "name": "奶茶咖啡",
+      "icon": "cat-drink",
+      "tone": "mint"
+    },
+    {
+      "id": "night",
+      "name": "夜宵烧烤",
+      "icon": "cat-night",
+      "tone": "peach"
+    },
+    {
+      "id": "fruit",
+      "name": "水果甜品",
+      "icon": "cat-fruit",
+      "tone": "rose"
+    }
+  ],
+  "merchants": [
+    {
+      "id": "m1",
+      "name": "山野拌饭研究所",
+      "en": "MOUNTAIN BOWL LAB",
+      "cover": "/assets/images/hero-bowl.jpg",
+      "rating": 4.9,
+      "ratingCount": "1.2万",
+      "sales": "月售 2.3k",
+      "time": 15,
+      "distance": "1.2km",
+      "delivery": 1.5,
+      "minOrder": 20,
+      "coupon": "满20减6",
+      "couponValue": 6,
+      "couponThreshold": 20,
+      "badge": "校园 TOP 1",
+      "category": [
+        "meal",
+        "light"
+      ],
+      "tags": [
+        "宿舍必点",
+        "回头客多",
+        "出餐快"
+      ],
+      "notice": "新客下单赠温泉蛋一份。每日 10:30 开灶，饭点订单较多，请耐心等候。",
+      "address": "北苑食堂 3F · 12 号档口",
+      "hot": [
+        "温泉蛋和牛拌饭",
+        "香煎鸡腿饭",
+        "海苔脆脆饭"
+      ],
+      "dishes": [
+        {
+          "id": "d101",
+          "category": "招牌必点",
+          "name": "温泉蛋和牛拌饭",
+          "desc": "谷饲和牛 · 流心温泉蛋 · 秘制山野酱",
+          "price": 28.8,
+          "originalPrice": 32,
+          "image": "/assets/images/hero-bowl.jpg",
+          "tag": "TOP 1",
+          "sales": "月售 900+"
+        },
+        {
+          "id": "d102",
+          "category": "招牌必点",
+          "name": "香煎鸡腿饭",
+          "desc": "去骨鸡腿 · 脆海苔 · 时蔬",
+          "price": 22.8,
+          "originalPrice": 26,
+          "image": "/assets/images/shop-rice.jpg",
+          "tag": "回头客多",
+          "sales": "月售 600+"
+        },
+        {
+          "id": "d103",
+          "category": "招牌必点",
+          "name": "海苔脆脆饭",
+          "desc": "脆海苔 · 肉松 · 温泉蛋",
+          "price": 19.8,
+          "originalPrice": 22,
+          "image": "/assets/images/shop-salad.jpg",
+          "sales": "月售 300+"
+        },
+        {
+          "id": "d104",
+          "category": "小食加料",
+          "name": "芝士玉米粒",
+          "desc": "甜玉米 · 马苏里拉",
+          "price": 8.8,
+          "image": "/assets/images/shop-bowl.jpg",
+          "sales": "月售 200+"
+        },
+        {
+          "id": "d105",
+          "category": "小食加料",
+          "name": "辣白菜",
+          "desc": "清爽解腻",
+          "price": 5,
+          "image": "/assets/images/shop-salad.jpg"
+        },
+        {
+          "id": "d106",
+          "category": "清爽饮品",
+          "name": "青桔气泡水",
+          "desc": "现切青桔 · 无糖气泡",
+          "price": 6.8,
+          "image": "/assets/images/shop-tea.jpg"
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "name": "巷口 · 手作汉堡",
+      "en": "ALLEY BURGER",
+      "cover": "/assets/images/shop-burger.jpg",
+      "rating": 4.8,
+      "ratingCount": "8600",
+      "sales": "月售 1.6k",
+      "time": 20,
+      "distance": "1.8km",
+      "delivery": 2,
+      "minOrder": 25,
+      "coupon": "满25减5",
+      "couponValue": 5,
+      "couponThreshold": 25,
+      "badge": "新店",
+      "category": [
+        "meal"
+      ],
+      "tags": [
+        "手作牛肉",
+        "拍照好看"
+      ],
+      "notice": "牛肉饼每日现打，下单后制作。介意等待的同学慎点。",
+      "address": "南门文创街 8 号",
+      "hot": [
+        "双层芝士牛肉堡",
+        "松露脆薯"
+      ],
+      "dishes": [
+        {
+          "id": "d201",
+          "category": "手作汉堡",
+          "name": "双层芝士牛肉堡",
+          "desc": "双层安格斯牛肉 · 车打芝士 · 酸黄瓜",
+          "price": 29.9,
+          "image": "/assets/images/shop-burger.jpg",
+          "tag": "招牌",
+          "sales": "月售 500+"
+        },
+        {
+          "id": "d202",
+          "category": "手作汉堡",
+          "name": "烟熏培根堡",
+          "desc": "脆培根 · 焦糖洋葱 · 烟熏酱",
+          "price": 27.9,
+          "image": "/assets/images/shop-burger.jpg",
+          "sales": "月售 300+"
+        },
+        {
+          "id": "d203",
+          "category": "小食",
+          "name": "松露芝士脆薯",
+          "desc": "黑松露酱 · 帕玛森芝士",
+          "price": 12.8,
+          "image": "/assets/images/shop-bowl.jpg",
+          "tag": "必点",
+          "sales": "月售 400+"
+        },
+        {
+          "id": "d204",
+          "category": "饮品",
+          "name": "冰柠可乐",
+          "desc": "手切柠檬 · 冰块加满",
+          "price": 8,
+          "image": "/assets/images/shop-tea.jpg"
+        }
+      ]
+    },
+    {
+      "id": "m3",
+      "name": "茶山令 · 鲜果茶",
+      "en": "TEA MOUNTAIN",
+      "cover": "/assets/images/shop-tea.jpg",
+      "rating": 4.9,
+      "ratingCount": "2.4万",
+      "sales": "月售 3.1k",
+      "time": 12,
+      "distance": "0.6km",
+      "delivery": 1,
+      "minOrder": 15,
+      "coupon": "满15减3",
+      "couponValue": 3,
+      "couponThreshold": 15,
+      "badge": "回头客 TOP",
+      "category": [
+        "drink",
+        "fruit"
+      ],
+      "tags": [
+        "鲜果现切",
+        "低糖可选"
+      ],
+      "notice": "所有饮品默认五分糖、少冰，可在备注中调整。",
+      "address": "北苑生活广场 1F",
+      "hot": [
+        "青提茉莉冰茶",
+        "黑糖珍珠鲜奶"
+      ],
+      "dishes": [
+        {
+          "id": "d301",
+          "category": "当季鲜果茶",
+          "name": "青提茉莉冰茶",
+          "desc": "阳光玫瑰青提 · 茉莉绿茶",
+          "price": 15.9,
+          "originalPrice": 18,
+          "image": "/assets/images/shop-tea.jpg",
+          "tag": "TOP",
+          "sales": "月售 1.2k"
+        },
+        {
+          "id": "d302",
+          "category": "当季鲜果茶",
+          "name": "白桃乌龙冰茶",
+          "desc": "水蜜桃 · 白桃乌龙",
+          "price": 13.9,
+          "image": "/assets/images/shop-fruit.jpg",
+          "sales": "月售 800+"
+        },
+        {
+          "id": "d303",
+          "category": "醇香奶茶",
+          "name": "黑糖珍珠鲜奶",
+          "desc": "手熬黑糖 · 鲜牛乳 · 珍珠",
+          "price": 17.9,
+          "image": "/assets/images/shop-tea.jpg",
+          "tag": "人气",
+          "sales": "月售 900+"
+        },
+        {
+          "id": "d304",
+          "category": "醇香奶茶",
+          "name": "栀子绿茶轻乳",
+          "desc": "栀子绿茶 · 轻乳",
+          "price": 14.9,
+          "image": "/assets/images/shop-coffee.jpg"
+        }
+      ]
+    },
+    {
+      "id": "m4",
+      "name": "深夜食堂 · 烧烤局",
+      "en": "MIDNIGHT CLUB",
+      "cover": "/assets/images/shop-bbq.jpg",
+      "rating": 4.7,
+      "ratingCount": "3200",
+      "sales": "月售 980",
+      "time": 25,
+      "distance": "2.1km",
+      "delivery": 2.5,
+      "minOrder": 30,
+      "coupon": "满30减8",
+      "couponValue": 8,
+      "couponThreshold": 30,
+      "badge": "夜宵档",
+      "category": [
+        "night",
+        "meal"
+      ],
+      "tags": [
+        "炭火现烤",
+        "营业到 2 点"
+      ],
+      "notice": "夜间 22:00 后订单较多，烧烤类出餐约 25 分钟。",
+      "address": "东门夜市 17 号",
+      "hot": [
+        "炭烤鸡翅",
+        "烤五花肉"
+      ],
+      "dishes": [
+        {
+          "id": "d401",
+          "category": "炭火肉串",
+          "name": "炭烤鸡翅（2串）",
+          "desc": "秘制蜜汁 · 炭火现烤",
+          "price": 12,
+          "image": "/assets/images/shop-bbq.jpg",
+          "tag": "必点",
+          "sales": "月售 600+"
+        },
+        {
+          "id": "d402",
+          "category": "炭火肉串",
+          "name": "烤五花肉（5串）",
+          "desc": "焦香五花 · 生菜包着吃",
+          "price": 18,
+          "image": "/assets/images/shop-bbq.jpg",
+          "sales": "月售 500+"
+        },
+        {
+          "id": "d403",
+          "category": "锡纸系列",
+          "name": "锡纸金针菇",
+          "desc": "蒜蓉 · 小米辣",
+          "price": 12,
+          "image": "/assets/images/shop-bowl.jpg",
+          "sales": "月售 400+"
+        }
+      ]
+    },
+    {
+      "id": "m5",
+      "name": "南门砂锅米线",
+      "en": "SOUTH GATE NOODLE",
+      "cover": "/assets/images/shop-noodle.jpg",
+      "rating": 4.8,
+      "ratingCount": "1.1万",
+      "sales": "月售 1.2k",
+      "time": 18,
+      "distance": "1.0km",
+      "delivery": 1.5,
+      "minOrder": 18,
+      "coupon": "满18减4",
+      "couponValue": 4,
+      "couponThreshold": 18,
+      "badge": "老店",
+      "category": [
+        "meal"
+      ],
+      "tags": [
+        "砂锅现煮",
+        "汤底浓郁"
+      ],
+      "notice": "米线默认微辣，可备注不辣。",
+      "address": "南门小吃街 3 号",
+      "hot": [
+        "番茄肥牛米线",
+        "酸辣米线"
+      ],
+      "dishes": [
+        {
+          "id": "d501",
+          "category": "招牌砂锅",
+          "name": "番茄肥牛米线",
+          "desc": "番茄浓汤 · 肥牛卷 · 米线",
+          "price": 19.9,
+          "image": "/assets/images/shop-noodle.jpg",
+          "tag": "招牌",
+          "sales": "月售 700+"
+        },
+        {
+          "id": "d502",
+          "category": "招牌砂锅",
+          "name": "酸辣米线",
+          "desc": "酸辣汤底 · 豆芽 · 米线",
+          "price": 15.9,
+          "image": "/assets/images/shop-noodle.jpg",
+          "sales": "月售 400+"
+        },
+        {
+          "id": "d503",
+          "category": "加料",
+          "name": "现炸小酥肉",
+          "desc": "外酥里嫩",
+          "price": 8,
+          "image": "/assets/images/shop-bbq.jpg"
+        }
+      ]
+    },
+    {
+      "id": "m6",
+      "name": "低卡实验室",
+      "en": "LOW CAL LAB",
+      "cover": "/assets/images/shop-salad.jpg",
+      "rating": 4.9,
+      "ratingCount": "5600",
+      "sales": "月售 760",
+      "time": 17,
+      "distance": "1.4km",
+      "delivery": 2,
+      "minOrder": 25,
+      "coupon": "满25减6",
+      "couponValue": 6,
+      "couponThreshold": 25,
+      "badge": "轻食推荐",
+      "category": [
+        "light"
+      ],
+      "tags": [
+        "热量标注",
+        "高蛋白"
+      ],
+      "notice": "所有沙拉酱汁独立包装，吃前再拌口感更好。",
+      "address": "体育馆西侧 1F",
+      "hot": [
+        "香煎鸡胸能量碗",
+        "牛油果虾仁沙拉"
+      ],
+      "dishes": [
+        {
+          "id": "d601",
+          "category": "能量碗",
+          "name": "香煎鸡胸能量碗",
+          "desc": "嫩煎鸡胸 · 藜麦 · 时蔬 · 428kcal",
+          "price": 25.9,
+          "image": "/assets/images/shop-salad.jpg",
+          "tag": "高蛋白",
+          "sales": "月售 400+"
+        },
+        {
+          "id": "d602",
+          "category": "能量碗",
+          "name": "牛油果虾仁沙拉",
+          "desc": "牛油果 · 鲜虾 · 羽衣甘蓝",
+          "price": 29.9,
+          "image": "/assets/images/shop-bowl.jpg",
+          "sales": "月售 200+"
+        },
+        {
+          "id": "d603",
+          "category": "健康饮品",
+          "name": "羽衣甘蓝苹果汁",
+          "desc": "冷压鲜榨 · 不加糖",
+          "price": 12,
+          "image": "/assets/images/shop-fruit.jpg"
+        }
+      ]
+    },
+    {
+      "id": "m7",
+      "name": "阿姨水果捞",
+      "en": "AUNTIE'S FRUIT",
+      "cover": "/assets/images/shop-fruit.jpg",
+      "rating": 4.9,
+      "ratingCount": "1.6万",
+      "sales": "月售 1.8k",
+      "time": 10,
+      "distance": "0.4km",
+      "delivery": 1,
+      "minOrder": 20,
+      "coupon": "满20减5",
+      "couponValue": 5,
+      "couponThreshold": 20,
+      "badge": "楼下就有",
+      "category": [
+        "fruit",
+        "dessert"
+      ],
+      "tags": [
+        "现切鲜果",
+        "酸奶无糖"
+      ],
+      "notice": "水果每日现切，售完即止。",
+      "address": "北苑 7 号楼便利店旁",
+      "hot": [
+        "招牌酸奶水果捞",
+        "芒果椰奶冻"
+      ],
+      "dishes": [
+        {
+          "id": "d701",
+          "category": "酸奶水果捞",
+          "name": "招牌酸奶水果捞",
+          "desc": "当季鲜果 · 无糖酸奶 · 燕麦脆",
+          "price": 18.8,
+          "image": "/assets/images/shop-fruit.jpg",
+          "tag": "招牌",
+          "sales": "月售 900+"
+        },
+        {
+          "id": "d702",
+          "category": "酸奶水果捞",
+          "name": "芒果椰奶冻",
+          "desc": "台农芒果 · 椰奶冻",
+          "price": 16.8,
+          "image": "/assets/images/shop-fruit.jpg",
+          "sales": "月售 500+"
+        },
+        {
+          "id": "d703",
+          "category": "鲜切果盒",
+          "name": "彩虹鲜切果盒",
+          "desc": "6 种当季水果",
+          "price": 12.8,
+          "image": "/assets/images/shop-fruit.jpg"
+        }
+      ]
+    },
+    {
+      "id": "m8",
+      "name": "南亚咖喱屋",
+      "en": "CURRY HOUSE",
+      "cover": "/assets/images/shop-curry.jpg",
+      "rating": 4.6,
+      "ratingCount": "2300",
+      "sales": "月售 620",
+      "time": 22,
+      "distance": "1.9km",
+      "delivery": 2,
+      "minOrder": 30,
+      "coupon": "满30减7",
+      "couponValue": 7,
+      "couponThreshold": 30,
+      "badge": "异国风味",
+      "category": [
+        "meal"
+      ],
+      "tags": [
+        "香料现熬",
+        "咖喱浓郁"
+      ],
+      "notice": "黄油鸡咖喱含坚果成分，过敏同学请留意。",
+      "address": "西区国际餐厅 2F",
+      "hot": [
+        "黄油鸡肉咖喱饭",
+        "蒜香飞饼"
+      ],
+      "dishes": [
+        {
+          "id": "d801",
+          "category": "咖喱主食",
+          "name": "黄油鸡肉咖喱饭",
+          "desc": "慢熬黄油咖喱 · 香米",
+          "price": 26,
+          "image": "/assets/images/shop-curry.jpg",
+          "tag": "必点",
+          "sales": "月售 300+"
+        },
+        {
+          "id": "d802",
+          "category": "咖喱主食",
+          "name": "椰香蔬菜咖喱",
+          "desc": "椰奶 · 时蔬 · 香米",
+          "price": 21,
+          "image": "/assets/images/shop-curry.jpg"
+        },
+        {
+          "id": "d803",
+          "category": "小食",
+          "name": "蒜香飞饼",
+          "desc": "现烤 · 蒜香黄油",
+          "price": 8,
+          "image": "/assets/images/shop-curry.jpg"
+        }
+      ]
+    },
+    {
+      "id": "m9",
+      "name": "山茶烘焙所",
+      "en": "MOUNTAIN TEA BAKERY",
+      "cover": "/assets/images/shop-dessert.jpg",
+      "rating": 4.9,
+      "ratingCount": "7800",
+      "sales": "月售 880",
+      "time": 14,
+      "distance": "0.9km",
+      "delivery": 1.5,
+      "minOrder": 28,
+      "coupon": "满28减6",
+      "couponValue": 6,
+      "couponThreshold": 28,
+      "badge": "下午茶",
+      "category": [
+        "dessert",
+        "drink"
+      ],
+      "tags": [
+        "每日现烤",
+        "低甜"
+      ],
+      "notice": "烘焙产品每日 14:00 出炉，售完即止。",
+      "address": "图书馆东侧 1F",
+      "hot": [
+        "生巧巴斯克",
+        "海盐可颂"
+      ],
+      "dishes": [
+        {
+          "id": "d901",
+          "category": "今日甜点",
+          "name": "生巧巴斯克",
+          "desc": "70% 生巧 · 流心",
+          "price": 22,
+          "image": "/assets/images/shop-dessert.jpg",
+          "tag": "人气",
+          "sales": "月售 300+"
+        },
+        {
+          "id": "d902",
+          "category": "今日甜点",
+          "name": "海盐可颂",
+          "desc": "法式黄油 · 海盐",
+          "price": 12,
+          "image": "/assets/images/shop-dessert.jpg",
+          "sales": "月售 200+"
+        },
+        {
+          "id": "d903",
+          "category": "咖啡",
+          "name": "冰美式",
+          "desc": "深烘拼配 · 清爽",
+          "price": 10,
+          "image": "/assets/images/shop-coffee.jpg"
+        }
+      ]
+    }
+  ],
+  "orders": [
+    {
+      "id": "SD202611110021",
+      "shopId": "m1",
+      "shopName": "山野拌饭研究所",
+      "shopCover": "/assets/images/hero-bowl.jpg",
+      "status": "delivering",
+      "statusText": "骑手配送中",
+      "statusNote": "预计 12:35 送达 · 北苑 7 号楼",
+      "total": 31.1,
+      "itemCount": 2,
+      "createdAt": "今天 11:48",
+      "address": "北苑 7 号楼 502 室",
+      "items": [
+        {
+          "name": "温泉蛋和牛拌饭",
+          "spec": "微辣 · 加温泉蛋",
+          "qty": 1,
+          "price": 28.8,
+          "image": "/assets/images/hero-bowl.jpg"
+        },
+        {
+          "name": "青桔气泡水",
+          "spec": "少冰 · 无糖",
+          "qty": 1,
+          "price": 6.8,
+          "image": "/assets/images/shop-tea.jpg"
+        }
+      ],
+      "rider": {
+        "name": "周师傅",
+        "phone": "138****6621",
+        "avatar": "周"
+      },
+      "timeline": [
+        {
+          "text": "骑手配送中",
+          "time": "12:21",
+          "done": true
+        },
+        {
+          "text": "商家已出餐",
+          "time": "12:08",
+          "done": true
+        },
+        {
+          "text": "订单已确认",
+          "time": "11:48",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "SD202611100018",
+      "shopId": "m3",
+      "shopName": "茶山令 · 鲜果茶",
+      "shopCover": "/assets/images/shop-tea.jpg",
+      "status": "done",
+      "statusText": "待评价",
+      "statusNote": "昨天 16:20 已送达",
+      "total": 29.8,
+      "itemCount": 2,
+      "createdAt": "昨天 15:52",
+      "address": "北苑 7 号楼 502 室",
+      "items": [
+        {
+          "name": "青提茉莉冰茶",
+          "spec": "五分糖 · 少冰",
+          "qty": 2,
+          "price": 15.9,
+          "image": "/assets/images/shop-tea.jpg"
+        }
+      ],
+      "rider": {
+        "name": "陈师傅",
+        "phone": "139****2018",
+        "avatar": "陈"
+      },
+      "timeline": []
+    },
+    {
+      "id": "SD202611080009",
+      "shopId": "m2",
+      "shopName": "巷口 · 手作汉堡",
+      "shopCover": "/assets/images/shop-burger.jpg",
+      "status": "rated",
+      "statusText": "已完成",
+      "statusNote": "11 月 8 日 19:05 已送达",
+      "total": 38.9,
+      "itemCount": 2,
+      "createdAt": "11 月 8 日 18:36",
+      "address": "图书馆 3F 自习区",
+      "items": [
+        {
+          "name": "双层芝士牛肉堡",
+          "spec": "默认",
+          "qty": 1,
+          "price": 29.9,
+          "image": "/assets/images/shop-burger.jpg"
+        },
+        {
+          "name": "松露芝士脆薯",
+          "spec": "默认",
+          "qty": 1,
+          "price": 12.8,
+          "image": "/assets/images/shop-bowl.jpg"
+        }
+      ],
+      "rider": {
+        "name": "李师傅",
+        "phone": "137****8830",
+        "avatar": "李"
+      },
+      "timeline": []
+    }
+  ],
+  "coupons": [
+    {
+      "id": "c1",
+      "type": "满减",
+      "amount": 6,
+      "threshold": 20,
+      "title": "满 20 减 6",
+      "desc": "全场通用 · 不与折扣同享",
+      "scope": "校园宿达 · 全平台",
+      "expire": "2026.12.31",
+      "status": "available",
+      "color": "lime"
+    },
+    {
+      "id": "c2",
+      "type": "满减",
+      "amount": 5,
+      "threshold": 25,
+      "title": "满 25 减 5",
+      "desc": "午餐时段专享",
+      "scope": "11:00 - 14:00 可用",
+      "expire": "2026.11.30",
+      "status": "available",
+      "color": "dark"
+    },
+    {
+      "id": "c3",
+      "type": "折扣",
+      "amount": 8.5,
+      "threshold": 30,
+      "title": "8.5 折",
+      "desc": "茶山令店铺专享",
+      "scope": "仅限茶山令 · 鲜果茶",
+      "expire": "2026.12.15",
+      "status": "available",
+      "color": "peach"
+    },
+    {
+      "id": "c4",
+      "type": "免配送",
+      "amount": 0,
+      "threshold": 0,
+      "title": "免配送费",
+      "desc": "宿舍拼单专享",
+      "scope": "订单满 2 件可用",
+      "expire": "2026.11.20",
+      "status": "available",
+      "color": "mint"
+    },
+    {
+      "id": "c5",
+      "type": "满减",
+      "amount": 8,
+      "threshold": 30,
+      "title": "满 30 减 8",
+      "desc": "夜宵档专享",
+      "scope": "22:00 后可用",
+      "expire": "2026.11.18",
+      "status": "used",
+      "color": "sand"
+    },
+    {
+      "id": "c6",
+      "type": "满减",
+      "amount": 4,
+      "threshold": 18,
+      "title": "满 18 减 4",
+      "desc": "新客尝鲜券",
+      "scope": "全平台通用",
+      "expire": "2026.10.31",
+      "status": "expired",
+      "color": "sand"
+    }
+  ],
+  "addresses": [
+    {
+      "id": "a1",
+      "name": "林小满",
+      "phone": "138 6621 0928",
+      "label": "宿舍",
+      "detail": "北苑 7 号楼 502 室",
+      "note": "门禁 23:30 关闭，请提前联系",
+      "default": true
+    },
+    {
+      "id": "a2",
+      "name": "林小满",
+      "phone": "138 6621 0928",
+      "label": "教学楼",
+      "detail": "图书馆 3F 自习区 A12 座",
+      "note": "请放前台，谢谢",
+      "default": false
+    }
+  ],
+  "user": {
+    "name": "林小满",
+    "initial": "满",
+    "school": "青禾大学 · 新闻传播学院",
+    "grade": "2024 级",
+    "level": "SUDA PRO",
+    "points": 1280,
+    "balance": 36.5,
+    "couponCount": 4,
+    "orderCount": 32,
+    "monthlySave": 19.8,
+    "memberNo": "NO. 0712 0326",
+    "monthly": [
+      26,
+      42,
+      18,
+      55,
+      39,
+      68,
+      46
+    ],
+    "monthlyDays": [
+      "一",
+      "二",
+      "三",
+      "四",
+      "五",
+      "六",
+      "日"
+    ]
+  },
+  "hotSearches": [
+    {
+      "name": "山野拌饭",
+      "hot": "1.2万"
+    },
+    {
+      "name": "青提茉莉",
+      "hot": "9.8k"
+    },
+    {
+      "name": "深夜烧烤",
+      "hot": "6.7k"
+    },
+    {
+      "name": "低卡能量碗",
+      "hot": "5.2k"
+    },
+    {
+      "name": "水果捞",
+      "hot": "4.9k"
+    },
+    {
+      "name": "南门米线",
+      "hot": "3.6k"
+    }
+  ],
+  "searchHistory": [
+    "和牛拌饭",
+    "鲜果茶",
+    "夜宵"
+  ],
+  "notifications": [
+    {
+      "id": "n1",
+      "title": "你的订单正在飞奔",
+      "desc": "周师傅已取餐，预计 12:35 送达北苑 7 号楼。",
+      "time": "12:21",
+      "unread": true
+    },
+    {
+      "id": "n2",
+      "title": "6 元无门槛券已到账",
+      "desc": "开学季宿舍拼单福利，本周日到期。",
+      "time": "昨天",
+      "unread": true
+    },
+    {
+      "id": "n3",
+      "title": "茶山令上新了",
+      "desc": "青提茉莉冰茶回归，第二杯半价。",
+      "time": "11 月 9 日",
+      "unread": false
+    }
+  ]
+}

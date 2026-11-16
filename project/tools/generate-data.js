@@ -1,0 +1,5 @@
+const fs = require('fs')
+const data = require('../miniprogram/data/mock.js')
+fs.writeFileSync('server/src/main/resources/mock-data.json', JSON.stringify(data, null, 2))
+fs.writeFileSync('web/src/data.json', JSON.stringify(data, null, 2))
+console.log('written mock data')

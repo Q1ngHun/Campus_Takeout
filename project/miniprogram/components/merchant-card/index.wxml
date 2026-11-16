@@ -1,0 +1,43 @@
+<view class="shop-card" bindtap="goDetail">
+  <view class="cover-wrap">
+    <image class="cover" src="{{merchant.cover}}" mode="aspectFill" />
+    <view class="rank-badge" wx:if="{{merchant.badge}}">{{merchant.badge}}</view>
+    <view class="time-badge">
+      <image src="/assets/icons/clock.svg" />
+      <text>{{merchant.time}} min</text>
+    </view>
+  </view>
+
+  <view class="shop-info">
+    <view class="shop-top">
+      <text class="shop-name">{{merchant.name}}</text>
+      <view class="rating">
+        <text class="star">★</text>
+        <text>{{merchant.rating}}</text>
+      </view>
+    </view>
+
+    <view class="meta">
+      <text>{{merchant.sales}}</text>
+      <view class="dot"></view>
+      <text>{{merchant.distance}}</text>
+      <view class="dot"></view>
+      <text>配送 ¥{{merchant.delivery}}</text>
+    </view>
+
+    <view class="tags">
+      <text class="tag" wx:for="{{merchant.tags}}" wx:key="*this">{{item}}</text>
+    </view>
+
+    <view class="coupon-line">
+      <view class="coupon">
+        <text class="coupon-icon">券</text>
+        <text>{{merchant.coupon}}</text>
+      </view>
+      <text class="hot-dish">{{merchant.hot[0]}}</text>
+      <view class="add-btn" catchtap="quickAdd">
+        <image src="/assets/icons/plus.svg" />
+      </view>
+    </view>
+  </view>
+</view>

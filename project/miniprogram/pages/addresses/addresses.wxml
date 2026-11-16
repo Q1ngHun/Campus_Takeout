@@ -1,0 +1,158 @@
+<view class="page-plain addresses-page">
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+
+  <view class="addresses-nav">
+    <view class="nav-back" bindtap="goBack">
+      <image src="/assets/icons/chevron-left.svg" />
+    </view>
+    <text class="addresses-nav-title">地址管理</text>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <view class="addresses-hero">
+    <view class="addresses-hero-copy">
+      <text class="hero-eyebrow">DELIVERY SPOT</text>
+      <text class="hero-title">把好味，<br />送到你手里。</text>
+      <text class="hero-sub">{{addresses.length}} 个常用地址 · 校园直送</text>
+    </view>
+    <view class="hero-route">
+      <view class="route-orbit"></view>
+      <view class="route-dash"></view>
+      <view class="route-start">
+        <view class="route-start-core"></view>
+      </view>
+      <view class="route-end">
+        <image src="/assets/icons/pin.svg" />
+      </view>
+      <view class="route-scooter">
+        <image src="/assets/icons/scooter.svg" />
+      </view>
+    </view>
+  </view>
+
+  <view class="section-head addresses-head">
+    <view>
+      <text class="section-title">我的地址</text>
+      <text class="section-sub">SAVED ADDRESSES</text>
+    </view>
+    <view class="addresses-add-mini" bindtap="openAdd">
+      <image src="/assets/icons/plus.svg" />
+      <text>新增</text>
+    </view>
+  </view>
+
+  <view class="address-list" wx:if="{{addresses.length}}">
+    <view
+      class="address-item {{item.default ? 'default' : ''}}"
+      wx:for="{{addresses}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="selectAddress"
+    >
+      <view class="address-item-top">
+        <view class="address-tags">
+          <view class="address-type">{{item.label}}</view>
+          <view class="default-tag" wx:if="{{item.default}}">默认</view>
+        </view>
+        <view class="address-person">
+          <text class="address-name">{{item.name}}</text>
+          <text class="address-phone">{{item.phone}}</text>
+        </view>
+      </view>
+
+      <text class="address-detail">{{item.detail}}</text>
+      <text class="address-note" wx:if="{{item.note}}">{{item.note}}</text>
+
+      <view class="address-item-foot">
+        <view class="address-actions">
+          <view class="address-action" data-index="{{index}}" catchtap="openEdit">
+            <image src="/assets/icons/edit.svg" />
+            <text>编辑</text>
+          </view>
+          <view class="address-action danger" data-index="{{index}}" catchtap="deleteAddress">
+            <image src="/assets/icons/trash.svg" />
+            <text>删除</text>
+          </view>
+          <view class="address-action" data-id="{{item.id}}" catchtap="setDefault" wx:if="{{!item.default}}">
+            <image src="/assets/icons/check.svg" />
+            <text>设为默认</text>
+          </view>
+        </view>
+        <view class="address-checked" wx:if="{{item.default}}">
+          <image src="/assets/icons/check.svg" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <empty-state
+    wx:else
+    icon="address"
+    title="还没有收货地址"
+    desc="添加宿舍或教学楼地址，让好味准时抵达"
+    action="新增地址"
+    bind:action="openAdd"
+  />
+
+  <view class="addresses-space"></view>
+
+  <view class="add-address-bar" bindtap="openAdd">
+    <view class="add-icon">
+      <image src="/assets/icons/plus.svg" />
+    </view>
+    <text>新增收货地址</text>
+    <image class="add-arrow" src="/assets/icons/arrow.svg" />
+  </view>
+
+  <view class="address-mask" wx:if="{{sheetVisible}}" bindtap="closeSheet">
+    <view class="address-sheet" catchtap="noop">
+      <view class="sheet-handle"></view>
+      <view class="sheet-head">
+        <view>
+          <text class="sheet-eyebrow">ADDRESS</text>
+          <text class="sheet-title">{{editingIndex > -1 ? '编辑地址' : '新增地址'}}</text>
+        </view>
+        <view class="sheet-close" bindtap="closeSheet">
+          <image src="/assets/icons/close.svg" />
+        </view>
+      </view>
+
+      <view class="label-row">
+        <view
+          class="label-chip {{draft.label === item ? 'active' : ''}}"
+          wx:for="{{labels}}"
+          wx:key="*this"
+          data-label="{{item}}"
+          bindtap="chooseLabel"
+        >{{item}}</view>
+      </view>
+
+      <view class="form-card">
+        <view class="form-row">
+          <text class="form-label">收货人</text>
+          <input class="form-input" data-field="name" value="{{draft.name}}" placeholder="怎么称呼你" placeholder-class="form-placeholder" bindinput="onField" />
+        </view>
+        <view class="form-line"></view>
+        <view class="form-row">
+          <text class="form-label">手机号</text>
+          <input class="form-input" data-field="phone" value="{{draft.phone}}" type="text" placeholder="方便骑手联系你" placeholder-class="form-placeholder" bindinput="onField" />
+        </view>
+        <view class="form-line"></view>
+        <view class="form-row">
+          <text class="form-label">详细地址</text>
+          <input class="form-input" data-field="detail" value="{{draft.detail}}" placeholder="如：北苑 7 号楼 502 室" placeholder-class="form-placeholder" bindinput="onField" />
+        </view>
+        <view class="form-line"></view>
+        <view class="form-row">
+          <text class="form-label">备注</text>
+          <input class="form-input" data-field="note" value="{{draft.note}}" placeholder="门禁、放置位置等" placeholder-class="form-placeholder" bindinput="onField" />
+        </view>
+      </view>
+
+      <view class="save-address-btn" bindtap="saveAddress">
+        <text>保存地址</text>
+        <image src="/assets/icons/arrow.svg" />
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,212 @@
+<view class="page-plain detail-page">
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+
+  <view class="detail-nav">
+    <view class="nav-back" bindtap="goBack">
+      <image src="/assets/icons/chevron-left.svg" />
+    </view>
+    <text class="detail-nav-title">订单详情</text>
+    <button class="nav-share" open-type="share">
+      <image src="/assets/icons/share.svg" />
+    </button>
+  </view>
+
+  <block wx:if="{{order}}">
+    <view class="success-banner" wx:if="{{success}}">
+      <view class="success-icon">
+        <image src="/assets/icons/check.svg" />
+      </view>
+      <view class="success-copy">
+        <text class="success-title">下单成功</text>
+        <text class="success-desc">商家已收到订单，正在为你准备</text>
+      </view>
+      <text class="success-spark">✦</text>
+    </view>
+
+    <view class="detail-hero">
+      <view class="detail-hero-glow"></view>
+      <view class="detail-top">
+        <view class="detail-live">
+          <view class="live-dot pulse"></view>
+          <text>{{order.statusText}}</text>
+        </view>
+        <text class="detail-id"># {{order.id}}</text>
+      </view>
+
+      <view class="detail-title-row">
+        <text class="detail-status-title">{{statusTitle}}</text>
+        <view class="detail-status-badge">CAMPUS</view>
+      </view>
+      <text class="detail-status-desc">{{statusDesc}}</text>
+
+      <view class="progress-rail">
+        <view class="progress-step" wx:for="{{progress}}" wx:key="name">
+          <view class="step-track">
+            <view class="step-dot {{item.done ? 'done' : ''}} {{item.current ? 'current' : ''}}">
+              <view class="dot-core"></view>
+            </view>
+            <view class="step-line {{item.done ? 'done' : ''}}" wx:if="{{index < progress.length - 1}}"></view>
+          </view>
+          <text class="step-name {{item.done ? 'done' : ''}}">{{item.name}}</text>
+        </view>
+      </view>
+
+      <view class="detail-shop" bindtap="goHome">
+        <image src="{{order.shopCover}}" mode="aspectFill" />
+        <view class="detail-shop-copy">
+          <text class="detail-shop-name">{{order.shopName}}</text>
+          <text class="detail-shop-note">{{order.itemCount}} 件商品 · 实付 ¥{{order.total}}</text>
+        </view>
+        <view class="detail-shop-arrow">
+          <image src="/assets/icons/chevron-right.svg" />
+        </view>
+      </view>
+    </view>
+
+    <view class="rider-card" wx:if="{{riderVisible}}">
+      <view class="rider-avatar">{{order.rider.avatar}}</view>
+      <view class="rider-copy">
+        <view class="rider-name-row">
+          <text class="rider-name">{{order.rider.name}}</text>
+          <view class="rider-tag">校园骑手</view>
+        </view>
+        <text class="rider-status">{{order.status === 'preparing' ? '商家出餐后立即为你配送' : '已取餐 · 正在向你飞奔'}}</text>
+      </view>
+      <view class="rider-btn" bindtap="contactRider">
+        <image src="/assets/icons/phone.svg" />
+        <text>联系</text>
+      </view>
+    </view>
+
+    <view class="timeline-card" wx:if="{{order.timeline && order.timeline.length}}">
+      <view class="card-head">
+        <text class="card-title">配送动态</text>
+        <text class="card-sub">LIVE TRACKING</text>
+      </view>
+      <view class="timeline-list">
+        <view class="timeline-item" wx:for="{{order.timeline}}" wx:key="text">
+          <view class="timeline-rail">
+            <view class="timeline-dot {{index === 0 ? 'active' : ''}} {{item.done ? 'done' : ''}}"></view>
+            <view class="timeline-line" wx:if="{{index < order.timeline.length - 1}}"></view>
+          </view>
+          <view class="timeline-copy">
+            <text class="timeline-text {{index === 0 ? 'active' : ''}}">{{item.text}}</text>
+            <text class="timeline-time">{{item.time || '待更新'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="address-card">
+      <view class="address-icon">
+        <image src="/assets/icons/pin.svg" />
+      </view>
+      <view class="address-copy">
+        <text class="address-label">收货地址</text>
+        <text class="address-detail">{{order.address}}</text>
+      </view>
+      <view class="address-time">预计送达<br />12:35</view>
+    </view>
+
+    <view class="goods-card">
+      <view class="card-head">
+        <text class="card-title">餐品清单</text>
+        <text class="card-sub">{{order.itemCount}} ITEMS</text>
+      </view>
+      <view class="goods-item" wx:for="{{order.items}}" wx:key="name">
+        <image src="{{item.image}}" mode="aspectFill" />
+        <view class="goods-copy">
+          <text class="goods-name">{{item.name}}</text>
+          <text class="goods-spec">{{item.spec}}</text>
+        </view>
+        <view class="goods-right">
+          <text class="goods-qty">×{{item.qty}}</text>
+          <text class="goods-price">¥{{item.price}}</text>
+        </view>
+      </view>
+
+      <view class="bill-line"></view>
+      <view class="bill-row">
+        <text>商品小计</text>
+        <text>¥{{order.total}}</text>
+      </view>
+      <view class="bill-row">
+        <text>配送费</text>
+        <text>已含</text>
+      </view>
+      <view class="bill-row total">
+        <text>实付金额</text>
+        <text class="bill-total">¥{{order.total}}</text>
+      </view>
+    </view>
+
+    <view class="info-card">
+      <view class="card-head">
+        <text class="card-title">订单信息</text>
+        <text class="card-sub">ORDER INFO</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">下单时间</text>
+        <text class="info-value">{{order.createdAt}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">订单编号</text>
+        <view class="info-value copy-value">
+          <text>{{order.id}}</text>
+          <view class="copy-btn">复制</view>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-label">支付方式</text>
+        <text class="info-value">{{order.payMethod || '微信支付'}}</text>
+      </view>
+      <view class="info-row" wx:if="{{order.remark}}">
+        <text class="info-label">订单备注</text>
+        <text class="info-value">{{order.remark}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">配送方式</text>
+        <text class="info-value">校园直送</text>
+      </view>
+    </view>
+
+    <view class="detail-service">
+      <view class="service-item" bindtap="contactShop">
+        <view class="service-icon">
+          <image src="/assets/icons/headset.svg" />
+        </view>
+        <text>联系商家</text>
+      </view>
+      <view class="service-item" bindtap="contactRider">
+        <view class="service-icon">
+          <image src="/assets/icons/scooter.svg" />
+        </view>
+        <text>配送咨询</text>
+      </view>
+      <view class="service-item" bindtap="deleteOrder">
+        <view class="service-icon">
+          <image src="/assets/icons/trash.svg" />
+        </view>
+        <text>删除订单</text>
+      </view>
+    </view>
+
+    <view class="detail-space"></view>
+
+    <view class="detail-actions">
+      <view class="action-ghost-detail" bindtap="reorder">再来一单</view>
+      <view class="action-primary-detail" wx:if="{{order.status === 'delivering' || order.status === 'preparing'}}" bindtap="contactRider">
+        <image src="/assets/icons/phone.svg" />
+        <text>联系骑手</text>
+      </view>
+      <view class="action-primary-detail" wx:elif="{{order.status === 'done'}}" bindtap="openReview">
+        <image src="/assets/icons/star.svg" />
+        <text>去评价</text>
+      </view>
+      <view class="action-primary-detail" wx:else bindtap="reorder">
+        <text>再来一单</text>
+        <image src="/assets/icons/arrow.svg" />
+      </view>
+    </view>
+  </block>
+</view>

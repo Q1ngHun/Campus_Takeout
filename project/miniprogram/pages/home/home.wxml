@@ -1,0 +1,194 @@
+<view class="page home-page">
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+
+  <view class="home-top">
+    <view class="brand">
+      <view class="brand-mark">
+        <text>宿</text>
+        <view class="brand-dot"></view>
+      </view>
+      <view class="brand-text">
+        <text class="brand-name">校园宿达</text>
+        <text class="brand-en">SUDA CAMPUS</text>
+      </view>
+    </view>
+
+    <view class="header-actions">
+      <view class="location" bindtap="goLocation">
+        <image src="/assets/icons/pin.svg" />
+        <text>北苑 · 7号楼</text>
+        <image class="chevron" src="/assets/icons/chevron-down.svg" />
+      </view>
+      <view class="bell" bindtap="goNotifications">
+        <image src="/assets/icons/bell.svg" />
+        <view class="notification-dot"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="welcome">
+    <text class="welcome-greeting">{{greeting}}，小满</text>
+    <text class="welcome-sub">今天也要好好吃饭。</text>
+  </view>
+
+  <view class="search-bar" bindtap="goSearch">
+    <image class="search-icon" src="/assets/icons/search.svg" />
+    <text class="search-placeholder">搜宿舍楼下的好吃的</text>
+    <view class="search-divider"></view>
+    <view class="scan-btn">
+      <image src="/assets/icons/scan.svg" />
+    </view>
+  </view>
+
+  <view class="hero-card fade-up">
+    <view class="hero-glow"></view>
+    <view class="hero-content">
+      <view class="hero-eyebrow">
+        <view class="live-dot"></view>
+        <text>CAMPUS EXPRESS · 15 MIN</text>
+      </view>
+      <view class="hero-title">把好吃的，<text class="hero-title-line">送到楼下。</text></view>
+      <view class="hero-meta">
+        <view class="avatar-stack">
+          <view class="mini-avatar avatar-a">满</view>
+          <view class="mini-avatar avatar-b">周</view>
+          <view class="mini-avatar avatar-c">+</view>
+        </view>
+        <text>2,600+ 同学正在点单</text>
+      </view>
+    </view>
+
+    <view class="hero-art">
+      <view class="hero-ring"></view>
+      <image class="hero-image" src="/assets/images/hero-bowl.jpg" mode="aspectFill" />
+      <view class="hero-sticker">
+        <text class="sticker-top">今日灵感</text>
+        <text class="sticker-main">山野拌饭</text>
+      </view>
+      <view class="hero-bubble">
+        <text class="bubble-price"><text class="bubble-symbol">¥</text>28.8</text>
+        <text class="bubble-desc">起 · 15min 达</text>
+      </view>
+    </view>
+
+    <view class="hero-cta" bindtap="addFeature">
+      <text>立即点单</text>
+      <view class="hero-cta-arrow">
+        <image src="/assets/icons/arrow.svg" />
+      </view>
+    </view>
+  </view>
+
+  <view class="category-grid">
+    <view
+      class="category-item {{activeCategory === item.id ? 'active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="selectCategory"
+    >
+      <view class="category-bubble tone-{{item.tone}}">
+        <image src="/assets/icons/{{item.icon}}.svg" mode="aspectFit" />
+        <view class="active-indicator" wx:if="{{activeCategory === item.id}}"></view>
+      </view>
+      <text class="category-name">{{item.name}}</text>
+    </view>
+  </view>
+
+  <view class="promo-strip" bindtap="goCoupons">
+    <view class="promo-left">
+      <view class="promo-label">NEW</view>
+      <view class="promo-copy">
+        <text class="promo-title">开学季 · 宿舍拼单</text>
+        <text class="promo-desc">满 20 减 6，新客再减 3 元</text>
+      </view>
+    </view>
+    <view class="promo-cta">
+      <text>去领券</text>
+      <image src="/assets/icons/arrow.svg" />
+    </view>
+  </view>
+
+  <view class="section-head">
+    <view>
+      <text class="section-title">今日热卖</text>
+      <text class="section-sub">HOT NOW</text>
+    </view>
+    <view class="section-link" bindtap="goSearch">
+      <text>全部</text>
+      <image src="/assets/icons/arrow.svg" />
+    </view>
+  </view>
+
+  <scroll-view class="hot-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="hot-list">
+      <view class="hot-card" wx:for="{{hotMerchants}}" wx:key="id" data-id="{{item.id}}" bindtap="goShop">
+        <image class="hot-cover" src="{{item.cover}}" mode="aspectFill" />
+        <view class="hot-gradient"></view>
+        <view class="hot-index">0{{index + 1}}</view>
+        <view class="hot-rating">
+          <text>★</text>
+          <text>{{item.rating}}</text>
+        </view>
+        <view class="hot-bottom">
+          <text class="hot-name">{{item.name}}</text>
+          <view class="hot-line">
+            <text>{{item.hot[0]}}</text>
+            <text class="hot-time">{{item.time}} min</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="feed-head">
+    <view>
+      <text class="section-title">附近好味</text>
+      <text class="section-sub">AROUND CAMPUS</text>
+    </view>
+    <view class="feed-filter">
+      <text>综合排序</text>
+      <image src="/assets/icons/chevron-down.svg" />
+    </view>
+  </view>
+
+  <view class="feed-list">
+    <merchant-card
+      wx:for="{{visibleMerchants}}"
+      wx:key="id"
+      merchant="{{item}}"
+      bind:add="addFromCard"
+    />
+    <empty-state
+      wx:if="{{!visibleMerchants.length}}"
+      icon="search"
+      title="这一口还在路上"
+      desc="换个分类看看，或者搜索你想吃的"
+      action="去搜索"
+      bind:action="goSearch"
+    />
+  </view>
+
+  <view class="feed-end">
+    <view class="end-line"></view>
+    <text>END · 今日好味已加载</text>
+    <view class="end-line"></view>
+  </view>
+
+  <view class="floating-cart" wx:if="{{cartCount > 0}}" bindtap="goCart">
+    <view class="cart-left">
+      <view class="cart-icon">
+        <image src="/assets/icons/bag.svg" />
+        <view class="cart-count">{{cartCount}}</view>
+      </view>
+      <view class="cart-copy">
+        <text class="cart-total"><text class="cart-symbol">¥</text>{{cartTotal}}</text>
+        <text class="cart-shop">{{cartShopName}}</text>
+      </view>
+    </view>
+    <view class="cart-checkout">
+      <text>去结算</text>
+      <image src="/assets/icons/arrow.svg" />
+    </view>
+  </view>
+</view>

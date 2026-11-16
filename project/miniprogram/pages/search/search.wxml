@@ -1,0 +1,156 @@
+<view class="page-plain search-page">
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+
+  <view class="search-nav">
+    <view class="search-back" bindtap="goBack">
+      <image src="/assets/icons/chevron-left.svg" />
+    </view>
+    <view class="search-box">
+      <image class="search-icon" src="/assets/icons/search.svg" />
+      <input
+        class="search-input"
+        value="{{keyword}}"
+        placeholder="搜店铺、美食或口味"
+        placeholder-class="search-placeholder"
+        confirm-type="search"
+        bindinput="onInput"
+        bindconfirm="doSearch"
+        autofocus="{{true}}"
+      />
+      <view class="clear-btn" wx:if="{{keyword}}" bindtap="clearInput">
+        <image src="/assets/icons/close.svg" />
+      </view>
+    </view>
+    <text class="cancel" bindtap="goBack">取消</text>
+  </view>
+
+  <block wx:if="{{!keyword}}">
+    <view class="search-section" wx:if="{{history.length}}">
+      <view class="block-head">
+        <view>
+          <text class="block-title">最近搜索</text>
+          <text class="block-sub">RECENT</text>
+        </view>
+        <view class="trash-btn" bindtap="clearHistory">
+          <image src="/assets/icons/trash.svg" />
+        </view>
+      </view>
+      <view class="history-tags">
+        <view
+          class="history-tag"
+          wx:for="{{history}}"
+          wx:key="*this"
+          data-keyword="{{item}}"
+          bindtap="useKeyword"
+        >
+          <text>{{item}}</text>
+          <image src="/assets/icons/arrow.svg" />
+        </view>
+      </view>
+    </view>
+
+    <view class="search-section">
+      <view class="block-head">
+        <view>
+          <text class="block-title">校园热搜</text>
+          <text class="block-sub">TRENDING NOW</text>
+        </view>
+        <view class="hot-live">
+          <view class="live-dot"></view>
+          <text>实时</text>
+        </view>
+      </view>
+      <view class="hot-searches">
+        <view
+          class="hot-search-item"
+          wx:for="{{hotSearches}}"
+          wx:key="name"
+          data-keyword="{{item.name}}"
+          bindtap="useKeyword"
+        >
+          <text class="hot-rank {{index < 3 ? 'top' : ''}}">0{{index + 1}}</text>
+          <text class="hot-name">{{item.name}}</text>
+          <text class="hot-count">{{item.hot}}</text>
+          <view class="hot-bar"></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="inspiration-card" bindtap="surprise">
+      <image class="inspiration-cover" src="/assets/images/hero-bowl.jpg" mode="aspectFill" />
+      <view class="inspiration-mask"></view>
+      <view class="inspiration-copy">
+        <text class="inspiration-eyebrow">CAN'T DECIDE?</text>
+        <text class="inspiration-title">不知道吃什么？</text>
+        <text class="inspiration-desc">让宿达替你挑一家</text>
+      </view>
+      <view class="inspiration-btn">
+        <image src="/assets/icons/spark.svg" />
+        <text>随机一家</text>
+      </view>
+    </view>
+
+    <view class="search-foot">
+      <text>搜索即代表同意《校园宿达搜索服务说明》</text>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="results-head">
+      <view>
+        <text class="results-title">{{searched ? '搜索结果' : '正在搜索'}}</text>
+        <text class="results-sub" wx:if="{{searched}}">找到 {{resultCount}} 个相关结果</text>
+      </view>
+      <view class="results-filter">
+        <text>综合</text>
+        <image src="/assets/icons/chevron-down.svg" />
+      </view>
+    </view>
+
+    <view class="results-list" wx:if="{{results.length}}">
+      <merchant-card
+        wx:for="{{results}}"
+        wx:key="id"
+        merchant="{{item}}"
+        bind:add="quickAdd"
+      />
+    </view>
+
+    <view class="dish-section" wx:if="{{dishes.length}}">
+      <view class="dish-head">
+        <text class="dish-title">相关单品</text>
+        <text class="dish-sub">DISHES</text>
+      </view>
+      <view class="dish-list">
+        <view class="dish-card" wx:for="{{dishes}}" wx:key="id">
+          <image src="{{item.image}}" mode="aspectFill" />
+          <view class="dish-copy">
+            <text class="dish-name">{{item.name}}</text>
+            <text class="dish-shop">{{item.shopName}}</text>
+            <view class="dish-bottom">
+              <text class="dish-price"><text>¥</text>{{item.price}}</text>
+              <view class="dish-add" data-shopid="{{item.shopId}}" data-dishid="{{item.id}}" bindtap="addDish">
+                <image src="/assets/icons/plus.svg" />
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty-state
+      wx:if="{{searched && !results.length && !dishes.length}}"
+      icon="search"
+      title="没有找到这口好味"
+      desc="换个关键词试试，比如「拌饭」「鲜果茶」「夜宵」"
+      action="随机吃一家"
+      bind:action="surprise"
+    />
+
+    <view class="results-foot" wx:if="{{resultCount}}">
+      <view class="foot-line"></view>
+      <text>以上是全部结果</text>
+      <view class="foot-line"></view>
+    </view>
+  </block>
+</view>

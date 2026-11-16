@@ -1,0 +1,179 @@
+<view class="page profile-page">
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+
+  <view class="profile-top">
+    <view>
+      <text class="eyebrow">MY SUDA</text>
+      <view class="profile-title-wrap">
+        <text class="profile-title">我的</text>
+        <text class="profile-dot">.</text>
+      </view>
+    </view>
+    <view class="settings-circle" bindtap="openSettings">
+      <image src="/assets/icons/settings.svg" />
+    </view>
+  </view>
+
+  <view class="profile-hero">
+    <view class="hero-orbit orbit-one"></view>
+    <view class="hero-orbit orbit-two"></view>
+    <view class="hero-cross cross-one">+</view>
+    <view class="hero-cross cross-two">+</view>
+
+    <view class="profile-main">
+      <view class="avatar-wrap">
+        <view class="avatar-ring"></view>
+        <view class="profile-avatar">{{user.initial}}</view>
+        <view class="verify-badge">
+          <image src="/assets/icons/check.svg" />
+        </view>
+      </view>
+      <view class="profile-info">
+        <view class="name-row">
+          <text class="profile-name">{{user.name}}</text>
+          <view class="pro-pill">PRO</view>
+        </view>
+        <text class="profile-school">{{user.school}}</text>
+        <view class="profile-meta">
+          <text>{{user.grade}}</text>
+          <view class="meta-dot"></view>
+          <text>校园身份已认证</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="member-link" bindtap="openMember">
+      <image src="/assets/icons/spark.svg" />
+      <text>会员中心</text>
+      <image class="member-arrow" src="/assets/icons/chevron-right.svg" />
+    </view>
+  </view>
+
+  <view class="stats-card">
+    <view class="stat-item" bindtap="openBalance">
+      <text class="stat-value"><text class="stat-symbol">¥</text>{{user.balance}}</text>
+      <text class="stat-label">宿达余额</text>
+    </view>
+    <view class="stat-line"></view>
+    <view class="stat-item" bindtap="goService" data-url="/pages/coupons/coupons">
+      <text class="stat-value">{{couponCount}}<text class="stat-unit">张</text></text>
+      <text class="stat-label">优惠券</text>
+    </view>
+    <view class="stat-line"></view>
+    <view class="stat-item" bindtap="openPoints">
+      <text class="stat-value">{{pointsLabel}}</text>
+      <text class="stat-label">宿达积分</text>
+    </view>
+  </view>
+
+  <view class="pro-card" bindtap="openMember">
+    <view class="pro-card-top">
+      <view>
+        <view class="pro-eyebrow">
+          <image src="/assets/icons/spark.svg" />
+          <text>SUDA PRO</text>
+        </view>
+        <text class="pro-title">本月已为你省下</text>
+      </view>
+      <view class="pro-level">LV. 03</view>
+    </view>
+    <view class="pro-bottom">
+      <view class="pro-saving">
+        <text class="pro-symbol">¥</text>
+        <text class="pro-number">{{user.monthlySave}}</text>
+      </view>
+      <view class="pro-progress">
+        <view class="progress-copy">
+          <text>再完成 3 单升级黑耀会员</text>
+          <text>7 / 10</text>
+        </view>
+        <view class="progress-track">
+          <view class="progress-fill"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-head profile-section-head">
+    <view>
+      <text class="section-title">我的服务</text>
+      <text class="section-sub">SERVICES</text>
+    </view>
+    <view class="section-link">
+      <text>全部</text>
+      <image src="/assets/icons/arrow.svg" />
+    </view>
+  </view>
+
+  <view class="service-grid">
+    <view
+      class="service-item"
+      wx:for="{{services}}"
+      wx:key="name"
+      data-url="{{item.url}}"
+      data-action="{{item.action}}"
+      bindtap="goService"
+    >
+      <view class="service-icon tone-bg-{{item.tone}}">
+        <image src="/assets/icons/{{item.icon}}.svg" />
+      </view>
+      <text class="service-name">{{item.name}}</text>
+    </view>
+  </view>
+
+  <view class="monthly-card">
+    <view class="monthly-top">
+      <view>
+        <text class="monthly-eyebrow">TASTE OF NOVEMBER</text>
+        <view class="monthly-title-row">
+          <text class="monthly-title">本月食光</text>
+          <text class="monthly-badge">7 天</text>
+        </view>
+      </view>
+      <view class="monthly-total">
+        <text class="monthly-symbol">¥</text>
+        <text class="monthly-value">{{monthlyTotal}}</text>
+      </view>
+    </view>
+
+    <view class="chart-bars">
+      <view class="bar-column" wx:for="{{monthly}}" wx:key="day">
+        <view class="bar-space">
+          <view class="bar {{item.active ? 'active' : ''}}" style="height: {{item.height}}rpx"></view>
+        </view>
+        <text class="bar-day {{item.active ? 'active' : ''}}">{{item.day}}</text>
+      </view>
+    </view>
+
+    <view class="monthly-foot">
+      <text class="monthly-note">本周最常点：山野拌饭</text>
+      <view class="monthly-link">
+        <text>查看报告</text>
+        <image src="/assets/icons/arrow.svg" />
+      </view>
+    </view>
+  </view>
+
+  <view class="more-list">
+    <view
+      class="more-item"
+      wx:for="{{more}}"
+      wx:key="name"
+      data-url="{{item.url}}"
+      data-action="{{item.action}}"
+      bindtap="handleMore"
+    >
+      <view class="more-icon">
+        <image src="/assets/icons/{{item.icon}}.svg" />
+      </view>
+      <text class="more-name">{{item.name}}</text>
+      <text class="more-desc">{{item.desc}}</text>
+      <image class="more-arrow" src="/assets/icons/chevron-right.svg" />
+    </view>
+  </view>
+
+  <view class="version">
+    <text>SUDA CAMPUS · 校园宿达</text>
+    <text>VERSION 1.0.0</text>
+  </view>
+</view>

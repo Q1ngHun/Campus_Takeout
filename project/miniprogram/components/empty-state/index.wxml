@@ -1,0 +1,10 @@
+<view class="empty">
+  <view class="empty-art">
+    <view class="orb"></view>
+    <image class="empty-icon" src="/assets/icons/{{icon}}.svg" mode="aspectFit" />
+    <text class="spark">✦</text>
+  </view>
+  <text class="empty-title">{{title}}</text>
+  <text class="empty-desc">{{desc}}</text>
+  <view class="empty-btn" wx:if="{{action}}" bindtap="handleAction">{{action}}</view>
+</view>

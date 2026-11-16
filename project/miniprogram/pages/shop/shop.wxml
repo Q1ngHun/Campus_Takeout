@@ -1,0 +1,224 @@
+<view class="shop-page">
+  <view class="shop-cover-wrap">
+    <image class="shop-cover" src="{{shop.cover}}" mode="aspectFill" />
+    <view class="cover-mask"></view>
+    <view class="shop-nav" style="padding-top: {{statusBarHeight}}px">
+      <view class="nav-icon" bindtap="goBack">
+        <image src="/assets/icons/chevron-left.svg" />
+      </view>
+      <view class="nav-right">
+        <view class="nav-icon {{favorite ? 'favorited' : ''}}" bindtap="toggleFavorite">
+          <image src="/assets/icons/heart.svg" />
+        </view>
+        <button class="nav-icon" open-type="share">
+          <image src="/assets/icons/share.svg" />
+        </button>
+      </view>
+    </view>
+    <view class="cover-stamp">
+      <text>SUDA SELECTED</text>
+      <view class="stamp-line"></view>
+      <text>NO. 0712</text>
+    </view>
+  </view>
+
+  <view class="shop-info-card">
+    <view class="shop-badge-row">
+      <view class="badge-pill">{{shop.badge}}</view>
+      <view class="badge-light">
+        <view class="live-dot"></view>
+        <text>校园直送</text>
+      </view>
+    </view>
+
+    <view class="shop-name-row">
+      <text class="shop-name">{{shop.name}}</text>
+      <view class="shop-rating">
+        <text class="rating-star">★</text>
+        <text>{{shop.rating}}</text>
+      </view>
+    </view>
+    <text class="shop-en">{{shop.en}}</text>
+
+    <view class="shop-stats">
+      <view class="shop-stat">
+        <text class="stat-num">{{shop.sales}}</text>
+        <text class="stat-label">月售</text>
+      </view>
+      <view class="stat-sep"></view>
+      <view class="shop-stat">
+        <text class="stat-num">{{shop.time}} min</text>
+        <text class="stat-label">送达</text>
+      </view>
+      <view class="stat-sep"></view>
+      <view class="shop-stat">
+        <text class="stat-num">¥{{shop.delivery}}</text>
+        <text class="stat-label">配送</text>
+      </view>
+      <view class="stat-sep"></view>
+      <view class="shop-stat">
+        <text class="stat-num">{{shop.distance}}</text>
+        <text class="stat-label">距离</text>
+      </view>
+    </view>
+
+    <view class="shop-tags">
+      <text class="shop-tag" wx:for="{{shop.tags}}" wx:key="*this">{{item}}</text>
+    </view>
+
+    <view class="coupon-strip" bindtap="openCoupon">
+      <view class="coupon-left">
+        <view class="coupon-mark">券</view>
+        <view class="coupon-copy">
+          <text class="coupon-title">{{shop.coupon}}</text>
+          <text class="coupon-desc">下单自动抵扣 · 校园专享</text>
+        </view>
+      </view>
+      <view class="coupon-get">领取</view>
+    </view>
+
+    <view class="notice-row">
+      <view class="notice-label">店铺公告</view>
+      <text class="notice-text">{{shop.notice}}</text>
+      <view class="notice-call" bindtap="callShop">
+        <image src="/assets/icons/phone.svg" />
+      </view>
+    </view>
+  </view>
+
+  <view class="menu-head">
+    <view>
+      <text class="section-title">点餐</text>
+      <text class="section-sub">CHOOSE YOUR BOWL</text>
+    </view>
+    <view class="menu-head-note">
+      <text>现点现做</text>
+      <view class="menu-dot"></view>
+      <text>约 {{shop.time}} 分钟</text>
+    </view>
+  </view>
+
+  <view class="menu-layout">
+    <view class="menu-side">
+      <view
+        class="menu-tab {{activeCategory === item ? 'active' : ''}}"
+        wx:for="{{menuCategories}}"
+        wx:key="*this"
+        data-category="{{item}}"
+        bindtap="selectCategory"
+      >
+        <text>{{item}}</text>
+        <view class="menu-tab-line"></view>
+      </view>
+    </view>
+
+    <view class="menu-main">
+      <view class="menu-category-title">
+        <text>{{activeCategory}}</text>
+        <text class="category-count">{{visibleDishes.length}} 道</text>
+      </view>
+
+      <view class="dish-card" wx:for="{{visibleDishes}}" wx:key="id">
+        <image class="dish-image" src="{{item.image}}" mode="aspectFill" />
+        <view class="dish-content">
+          <view class="dish-name-row">
+            <text class="dish-name">{{item.name}}</text>
+            <text class="dish-tag" wx:if="{{item.tag}}">{{item.tag}}</text>
+          </view>
+          <text class="dish-desc">{{item.desc}}</text>
+          <text class="dish-sales">{{item.sales || '本月热销'}}</text>
+          <view class="dish-bottom">
+            <view class="dish-price">
+              <text class="dish-symbol">¥</text>
+              <text class="dish-amount">{{item.price}}</text>
+              <text class="dish-original" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+            </view>
+            <view class="stepper" wx:if="{{item.qty > 0}}">
+              <view class="step-btn minus" data-id="{{item.id}}" bindtap="minusDish">
+                <image src="/assets/icons/minus.svg" />
+              </view>
+              <text class="step-value">{{item.qty}}</text>
+              <view class="step-btn plus" data-id="{{item.id}}" bindtap="addDish">
+                <image src="/assets/icons/plus.svg" />
+              </view>
+            </view>
+            <view class="add-dish" wx:else data-id="{{item.id}}" bindtap="addDish">
+              <image src="/assets/icons/plus.svg" />
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="menu-note">
+        <image src="/assets/icons/leaf.svg" />
+        <text>食材每日新鲜直采，餐盒使用可降解材质</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="cart-safe"></view>
+
+  <view class="shop-cart" bindtap="toggleCartPanel">
+    <view class="cart-icon-wrap {{cartCount ? 'filled' : ''}}">
+      <image src="/assets/icons/bag.svg" />
+      <view class="cart-badge" wx:if="{{cartCount}}">{{cartCount}}</view>
+    </view>
+    <view class="shop-cart-copy">
+      <text class="shop-cart-total" wx:if="{{cartCount}}"><text class="cart-yen">¥</text>{{cartTotal}}</text>
+      <text class="shop-cart-empty" wx:else>还没有选餐</text>
+      <text class="shop-cart-note">{{cartCount ? '已选 ' + cartCount + ' 件 · 另需配送费 ¥' + shop.delivery : '选择喜欢的餐品吧'}}</text>
+    </view>
+    <view class="checkout-btn {{cartCount ? '' : 'disabled'}}" catchtap="goCheckout">
+      <text>{{cartCount ? '去结算' : '去结算'}}</text>
+      <image src="/assets/icons/arrow.svg" />
+    </view>
+  </view>
+
+  <view class="cart-mask" wx:if="{{cartPanelVisible}}" bindtap="closeCartPanel">
+    <view class="cart-panel" catchtap="noop">
+      <view class="panel-handle"></view>
+      <view class="panel-head">
+        <view>
+          <text class="panel-title">已选餐品</text>
+          <text class="panel-sub">{{cartCount}} ITEMS · {{shop.name}}</text>
+        </view>
+        <view class="clear-cart" bindtap="clearCart">
+          <image src="/assets/icons/trash.svg" />
+          <text>清空</text>
+        </view>
+      </view>
+
+      <scroll-view class="cart-scroll" scroll-y>
+        <view class="cart-item" wx:for="{{cartItems}}" wx:key="dishId">
+          <image class="cart-item-image" src="{{item.image}}" mode="aspectFill" />
+          <view class="cart-item-copy">
+            <text class="cart-item-name">{{item.name}}</text>
+            <text class="cart-item-spec">{{item.spec}}</text>
+            <text class="cart-item-price">¥{{item.price}}</text>
+          </view>
+          <view class="stepper small">
+            <view class="step-btn minus" data-id="{{item.dishId}}" bindtap="minusCartItem">
+              <image src="/assets/icons/minus.svg" />
+            </view>
+            <text class="step-value">{{item.qty}}</text>
+            <view class="step-btn plus" data-id="{{item.dishId}}" bindtap="plusCartItem">
+              <image src="/assets/icons/plus.svg" />
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="panel-foot">
+        <view class="panel-total">
+          <text class="panel-total-label">小计</text>
+          <text class="panel-total-price"><text>¥</text>{{cartTotal}}</text>
+          <text class="panel-delivery">另需配送费 ¥{{shop.delivery}}</text>
+        </view>
+        <view class="panel-checkout" bindtap="goCheckout">
+          <text>去结算</text>
+          <image src="/assets/icons/arrow.svg" />
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

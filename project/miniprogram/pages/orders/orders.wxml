@@ -1,0 +1,220 @@
+<view class="page orders-page">
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+
+  <view class="orders-head">
+    <view>
+      <text class="eyebrow">MY ORDERS · {{counts.all}}</text>
+      <view class="orders-title-wrap">
+        <text class="orders-title">订单</text>
+        <text class="orders-dot">.</text>
+      </view>
+    </view>
+    <view class="head-badge">
+      <image src="/assets/icons/scooter.svg" />
+      <text>{{counts.ongoing}} 单进行中</text>
+    </view>
+  </view>
+
+  <view class="tabs">
+    <view
+      class="tab {{activeTab === item.id ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="switchTab"
+    >
+      <text>{{item.label}}</text>
+      <text class="tab-count" wx:if="{{item.count}}">{{item.count}}</text>
+    </view>
+  </view>
+
+  <view class="active-card fade-up" wx:if="{{activeOrder}}">
+    <view class="active-top">
+      <view class="status-live">
+        <view class="live-dot pulse"></view>
+        <text>{{activeOrder.statusText}}</text>
+      </view>
+      <text class="order-no"># {{activeOrder.id}}</text>
+    </view>
+
+    <view class="active-main">
+      <view class="eta-box">
+        <text class="eta-label">预计送达</text>
+        <view class="eta-time">
+          <text>{{activeOrder.status === 'preparing' ? '12:20' : '12:35'}}</text>
+          <text class="eta-unit">前</text>
+        </view>
+        <text class="eta-note">{{activeOrder.statusNote}}</text>
+      </view>
+
+      <view class="route-art">
+        <view class="route-halo"></view>
+        <view class="route-dash"></view>
+        <view class="route-pin route-start">
+          <view class="pin-core"></view>
+        </view>
+        <view class="route-pin route-end">
+          <image src="/assets/icons/pin.svg" />
+        </view>
+        <view class="route-scooter">
+          <image src="/assets/icons/scooter.svg" />
+        </view>
+      </view>
+    </view>
+
+    <view class="active-shop">
+      <image class="active-shop-cover" src="{{activeOrder.shopCover}}" mode="aspectFill" />
+      <view class="active-shop-copy">
+        <text class="active-shop-name">{{activeOrder.shopName}}</text>
+        <text class="active-shop-items">{{activeOrder.itemCount}} 件商品 · 实付 ¥{{activeOrder.total}}</text>
+      </view>
+      <view class="active-detail" data-id="{{activeOrder.id}}" bindtap="goDetail">详情</view>
+    </view>
+
+    <view class="rider-row">
+      <view class="rider-avatar">{{activeOrder.rider.avatar}}</view>
+      <view class="rider-copy">
+        <text class="rider-name">{{activeOrder.rider.name}}</text>
+        <text class="rider-status">已取餐 · 正在飞奔</text>
+      </view>
+      <view class="rider-call" bindtap="contactRider">
+        <image src="/assets/icons/phone.svg" />
+        <text>联系骑手</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="list-head" wx:if="{{displayOrders.length}}">
+    <text class="list-title">{{activeTab === 'review' ? '等你评价' : '历史订单'}}</text>
+    <text class="list-sub">{{displayOrders.length}} RECORDS</text>
+  </view>
+
+  <view class="order-list">
+    <view
+      class="order-card"
+      wx:for="{{displayOrders}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="goDetail"
+    >
+      <view class="order-top">
+        <image class="order-shop-cover" src="{{item.shopCover}}" mode="aspectFill" />
+        <view class="order-shop-copy">
+          <text class="order-shop-name">{{item.shopName}}</text>
+          <text class="order-time">{{item.createdAt}} · {{item.itemCount}} 件</text>
+        </view>
+        <view class="order-status status-{{item.status}}">{{item.statusText}}</view>
+      </view>
+
+      <view class="order-goods">
+        <view class="goods-thumbs">
+          <image
+            class="goods-thumb"
+            wx:for="{{item.items}}"
+            wx:for-item="goods"
+            wx:for-index="goodsIndex"
+            wx:key="name"
+            wx:if="{{goodsIndex < 3}}"
+            src="{{goods.image}}"
+            mode="aspectFill"
+          />
+        </view>
+        <view class="goods-desc">
+          <text class="goods-name">{{item.items[0].name}}</text>
+          <text class="goods-more" wx:if="{{item.itemCount > 1}}">等 {{item.itemCount}} 件商品</text>
+          <text class="goods-note">{{item.statusNote}}</text>
+        </view>
+        <view class="order-total">
+          <text class="total-label">实付</text>
+          <text class="total-price"><text class="total-symbol">¥</text>{{item.total}}</text>
+        </view>
+      </view>
+
+      <view class="order-actions">
+        <view class="action-ghost" data-id="{{item.id}}" catchtap="reorder">再来一单</view>
+        <view
+          class="action-primary"
+          wx:if="{{item.status === 'done'}}"
+          data-id="{{item.id}}"
+          catchtap="openReview"
+        >去评价</view>
+        <view
+          class="action-primary"
+          wx:elif="{{item.status === 'rated'}}"
+          data-id="{{item.id}}"
+          catchtap="goDetail"
+        >查看详情</view>
+        <view class="action-primary" wx:else data-id="{{item.id}}" catchtap="goDetail">订单详情</view>
+      </view>
+    </view>
+  </view>
+
+  <empty-state
+    wx:if="{{!activeOrder && !displayOrders.length}}"
+    icon="{{activeTab === 'review' ? 'star' : 'order'}}"
+    title="{{activeTab === 'review' ? '没有待评价的订单' : '还没有订单'}}"
+    desc="{{activeTab === 'review' ? '认真吃饭的人，值得被好好记录。' : '去首页逛逛，第一顿好味正在等你。'}}"
+    action="去点单"
+    bind:action="goHome"
+  />
+
+  <view class="order-footer" wx:if="{{activeOrder || displayOrders.length}}">
+    <view class="footer-line"></view>
+    <text>每一餐，都值得认真对待</text>
+    <view class="footer-line"></view>
+  </view>
+
+  <view class="sheet-mask" wx:if="{{reviewVisible}}" bindtap="closeReview">
+    <view class="review-sheet" catchtap="noop">
+      <view class="sheet-handle"></view>
+      <view class="sheet-head">
+        <view>
+          <text class="sheet-eyebrow">TELL US MORE</text>
+          <text class="sheet-title">这顿饭，还满意吗？</text>
+        </view>
+        <view class="sheet-close" bindtap="closeReview">
+          <image src="/assets/icons/close.svg" />
+        </view>
+      </view>
+
+      <view class="review-shop">
+        <image src="{{reviewOrder.shopCover}}" mode="aspectFill" />
+        <text>{{reviewOrder.shopName}}</text>
+      </view>
+
+      <view class="stars">
+        <view
+          class="star-item {{index < reviewStars ? 'filled' : ''}}"
+          wx:for="{{reviewStarList}}"
+          wx:key="*this"
+          data-value="{{item}}"
+          bindtap="setStar"
+        >★</view>
+      </view>
+
+      <view class="review-tags">
+        <view
+          class="review-tag {{item.active ? 'active' : ''}}"
+          wx:for="{{reviewOptions}}"
+          wx:key="name"
+          data-tag="{{item.name}}"
+          bindtap="toggleReviewTag"
+        >{{item.name}}</view>
+      </view>
+
+      <textarea
+        class="review-input"
+        placeholder="说说这一餐的闪光点吧…"
+        placeholder-class="review-placeholder"
+        maxlength="120"
+        value="{{reviewText}}"
+        bindinput="onReviewInput"
+      ></textarea>
+
+      <view class="review-submit" bindtap="submitReview">
+        <text>提交评价</text>
+        <text class="submit-reward">+10 宿达积分</text>
+      </view>
+    </view>
+  </view>
+</view>

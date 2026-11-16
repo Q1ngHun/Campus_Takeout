@@ -1,0 +1,68 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 40rpx 60rpx;
+}
+
+.empty-art {
+  position: relative;
+  width: 220rpx;
+  height: 220rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orb {
+  position: absolute;
+  width: 190rpx;
+  height: 190rpx;
+  border-radius: 50%;
+  background: #e9eedb;
+}
+
+.empty-icon {
+  position: relative;
+  width: 88rpx;
+  height: 88rpx;
+  opacity: 0.72;
+}
+
+.spark {
+  position: absolute;
+  right: 10rpx;
+  top: 20rpx;
+  color: #b9e83e;
+  font-size: 46rpx;
+}
+
+.empty-title {
+  margin-top: 30rpx;
+  font-size: 34rpx;
+  font-weight: 800;
+  letter-spacing: -0.5rpx;
+}
+
+.empty-desc {
+  margin-top: 14rpx;
+  font-size: 23rpx;
+  line-height: 1.7;
+  color: #8a9189;
+  text-align: center;
+  max-width: 460rpx;
+}
+
+.empty-btn {
+  margin-top: 38rpx;
+  height: 78rpx;
+  padding: 0 44rpx;
+  border-radius: 39rpx;
+  background: #18211a;
+  color: #d7ff5e;
+  font-size: 25rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

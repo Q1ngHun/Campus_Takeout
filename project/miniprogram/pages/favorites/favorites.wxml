@@ -1,0 +1,55 @@
+<view class="page-plain favorites-page">
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+
+  <view class="favorites-nav">
+    <view class="nav-back" bindtap="goBack">
+      <image src="/assets/icons/chevron-left.svg" />
+    </view>
+    <text class="favorites-nav-title">我的收藏</text>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <view class="favorites-hero">
+    <view class="hero-copy">
+      <text class="hero-eyebrow">SAVED TASTES</text>
+      <view class="hero-title-row">
+        <text class="hero-title">心头好</text>
+        <text class="hero-dot">.</text>
+      </view>
+      <text class="hero-sub">{{count}} 家店铺 · 想念的时候，随时点</text>
+    </view>
+    <view class="hero-heart">
+      <image src="/assets/icons/heart.svg" />
+    </view>
+    <view class="hero-spark">✦</view>
+  </view>
+
+  <view class="favorites-head" wx:if="{{count}}">
+    <text class="favorites-title">收藏的店铺</text>
+    <text class="favorites-count">{{count}} SAVED</text>
+  </view>
+
+  <view class="favorites-list" wx:if="{{count}}">
+    <view class="favorite-wrap" wx:for="{{favorites}}" wx:key="id">
+      <merchant-card merchant="{{item}}" bind:add="quickAdd" />
+      <view class="favorite-remove" data-id="{{item.id}}" catchtap="removeFavorite">
+        <image src="/assets/icons/close.svg" />
+      </view>
+    </view>
+  </view>
+
+  <empty-state
+    wx:else
+    icon="heart"
+    title="还没有收藏的店铺"
+    desc="遇到喜欢的味道，点亮那颗小爱心吧"
+    action="去发现好味"
+    bind:action="goHome"
+  />
+
+  <view class="favorites-foot" wx:if="{{count}}">
+    <view class="foot-line"></view>
+    <text>喜欢的，都留在这里</text>
+    <view class="foot-line"></view>
+  </view>
+</view>

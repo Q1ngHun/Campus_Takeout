@@ -1,0 +1,147 @@
+<view class="page-plain cart-page">
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+
+  <view class="cart-nav">
+    <view class="nav-back" bindtap="goBack">
+      <image src="/assets/icons/chevron-left.svg" />
+    </view>
+    <text class="cart-nav-title">购物车</text>
+    <view class="nav-clear" wx:if="{{count}}" bindtap="clearCart">
+      <image src="/assets/icons/trash.svg" />
+    </view>
+  </view>
+
+  <view class="cart-hero">
+    <text class="eyebrow">YOUR CART</text>
+    <view class="cart-title-row">
+      <text class="cart-title">已选好味</text>
+      <text class="cart-dot">.</text>
+    </view>
+    <text class="cart-sub" wx:if="{{count}}">{{count}} 件餐品 · {{shop.name}}</text>
+    <text class="cart-sub" wx:else>购物车还空着，去挑点好吃的</text>
+  </view>
+
+  <block wx:if="{{count}}">
+    <view class="shop-strip">
+      <image class="shop-strip-cover" src="{{shop.cover}}" mode="aspectFill" />
+      <view class="shop-strip-copy">
+        <text class="shop-strip-name">{{shop.name}}</text>
+        <text class="shop-strip-meta">校园直送 · 约 {{shop.time}} 分钟送达</text>
+      </view>
+      <view class="shop-strip-add" bindtap="goShop">
+        <text>继续加购</text>
+        <image src="/assets/icons/plus.svg" />
+      </view>
+    </view>
+
+    <view class="items-card">
+      <view class="items-head">
+        <text class="items-title">餐品清单</text>
+        <text class="items-count">{{count}} ITEMS</text>
+      </view>
+
+      <view class="cart-item" wx:for="{{cartItems}}" wx:key="dishId">
+        <image class="item-cover" src="{{item.image}}" mode="aspectFill" />
+        <view class="item-copy">
+          <text class="item-name">{{item.name}}</text>
+          <text class="item-spec">{{item.spec}}</text>
+          <view class="item-price-row">
+            <text class="item-price"><text>¥</text>{{item.price}}</text>
+            <view class="item-remove" data-id="{{item.dishId}}" bindtap="remove">
+              <image src="/assets/icons/trash.svg" />
+            </view>
+          </view>
+        </view>
+        <view class="stepper">
+          <view class="step-btn minus" data-id="{{item.dishId}}" bindtap="minus">
+            <image src="/assets/icons/minus.svg" />
+          </view>
+          <text class="step-value">{{item.qty}}</text>
+          <view class="step-btn plus" data-id="{{item.dishId}}" bindtap="plus">
+            <image src="/assets/icons/plus.svg" />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="service-card">
+      <view class="service-row" bindtap="chooseCoupon">
+        <view class="service-icon coupon-bg">
+          <image src="/assets/icons/coupon.svg" />
+        </view>
+        <view class="service-copy">
+          <text class="service-title">优惠券</text>
+          <text class="service-desc">{{coupon ? coupon.title + ' · 已抵扣 ¥' + discount : couponUsable ? couponCount + ' 张可用' : '暂无可用优惠券'}}</text>
+        </view>
+        <text class="service-action {{coupon ? 'active' : ''}}">{{coupon ? '-¥' + discount : '去选择'}}</text>
+        <image class="service-arrow" src="/assets/icons/chevron-right.svg" />
+      </view>
+
+      <view class="service-line"></view>
+
+      <view class="service-row">
+        <view class="service-icon delivery-bg">
+          <image src="/assets/icons/scooter.svg" />
+        </view>
+        <view class="service-copy">
+          <text class="service-title">配送方式</text>
+          <text class="service-desc">校园直送 · 预计 12:35 送达</text>
+        </view>
+        <text class="service-action">立即送出</text>
+      </view>
+    </view>
+
+    <view class="bill-card">
+      <view class="bill-head">
+        <text class="bill-title">费用明细</text>
+        <text class="bill-small">DETAILS</text>
+      </view>
+      <view class="bill-row">
+        <text>商品小计</text>
+        <text>¥{{subtotal}}</text>
+      </view>
+      <view class="bill-row">
+        <text>配送费</text>
+        <text>¥{{deliveryFee}}</text>
+      </view>
+      <view class="bill-row discount" wx:if="{{discount}}">
+        <text>优惠券</text>
+        <text>-¥{{discount}}</text>
+      </view>
+      <view class="bill-total">
+        <text>合计</text>
+        <view class="bill-total-price"><text>¥</text>{{total}}</view>
+      </view>
+      <view class="bill-note">
+        <image src="/assets/icons/shield.svg" />
+        <text>校园安心送 · 超时赔付 · 餐损必赔</text>
+      </view>
+    </view>
+
+    <view class="cart-footer-space"></view>
+
+    <view class="cart-checkout-bar">
+      <view class="checkout-total">
+        <view class="checkout-price-row">
+          <text class="checkout-label">合计</text>
+          <text class="checkout-price"><text>¥</text>{{total}}</text>
+        </view>
+        <text class="checkout-saved" wx:if="{{discount}}">已优惠 ¥{{discount}}</text>
+        <text class="checkout-saved" wx:else>已含配送费</text>
+      </view>
+      <view class="checkout-submit" bindtap="goCheckout">
+        <text>提交订单</text>
+        <image src="/assets/icons/arrow.svg" />
+      </view>
+    </view>
+  </block>
+
+  <empty-state
+    wx:else
+    icon="bag"
+    title="购物车还空着"
+    desc="去首页逛逛，发现宿舍楼下的好味道"
+    action="去逛逛"
+    bind:action="goHome"
+  />
+</view>

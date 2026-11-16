@@ -1,0 +1,510 @@
+.addresses-page {
+  padding-bottom: calc(220rpx + env(safe-area-inset-bottom));
+  background: radial-gradient(circle at 88% 0%, rgba(215, 255, 94, 0.16) 0, rgba(244, 242, 236, 0) 32%), #f4f2ec;
+}
+
+.addresses-nav {
+  height: 88rpx;
+  padding: 0 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.addresses-nav .nav-back {
+  margin-left: -14rpx;
+}
+
+.addresses-nav-title {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.nav-placeholder {
+  width: 64rpx;
+  height: 64rpx;
+}
+
+.addresses-hero {
+  position: relative;
+  height: 270rpx;
+  margin: 16rpx 32rpx 0;
+  padding: 30rpx;
+  border-radius: 36rpx;
+  background: #14251b;
+  overflow: hidden;
+  box-shadow: 0 18rpx 40rpx rgba(20, 37, 27, 0.16);
+}
+
+.addresses-hero-copy {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-eyebrow {
+  color: #d7ff5e;
+  font-size: 15rpx;
+  letter-spacing: 3rpx;
+  font-weight: 700;
+}
+
+.hero-title {
+  margin-top: 12rpx;
+  color: #ffffff;
+  font-size: 40rpx;
+  line-height: 1.28;
+  font-weight: 900;
+  letter-spacing: -1.5rpx;
+}
+
+.hero-sub {
+  margin-top: 12rpx;
+  color: #93a090;
+  font-size: 18rpx;
+}
+
+.hero-route {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 330rpx;
+  height: 270rpx;
+}
+
+.route-orbit {
+  position: absolute;
+  right: -80rpx;
+  top: -50rpx;
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 50%;
+  border: 1rpx solid rgba(215, 255, 94, 0.17);
+}
+
+.route-dash {
+  position: absolute;
+  right: 60rpx;
+  top: 142rpx;
+  width: 150rpx;
+  height: 2rpx;
+  background-image: linear-gradient(90deg, rgba(215, 255, 94, 0.6) 50%, transparent 50%);
+  background-size: 10rpx 2rpx;
+  transform: rotate(-16deg);
+}
+
+.route-start {
+  position: absolute;
+  left: 46rpx;
+  top: 150rpx;
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  background: #f4f2ec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.route-start-core {
+  width: 9rpx;
+  height: 9rpx;
+  border-radius: 50%;
+  background: #18211a;
+}
+
+.route-end {
+  position: absolute;
+  right: 30rpx;
+  top: 76rpx;
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+  background: #d7ff5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.route-end image {
+  width: 29rpx;
+  height: 29rpx;
+}
+
+.route-scooter {
+  position: absolute;
+  right: 150rpx;
+  top: 72rpx;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.route-scooter image {
+  width: 31rpx;
+  height: 31rpx;
+  filter: invert(1);
+}
+
+.addresses-head {
+  margin-top: 42rpx;
+}
+
+.addresses-add-mini {
+  height: 56rpx;
+  padding: 0 18rpx;
+  border-radius: 28rpx;
+  background: #18211a;
+  color: #d7ff5e;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+.addresses-add-mini image {
+  width: 22rpx;
+  height: 22rpx;
+}
+
+.address-list {
+  padding: 24rpx 32rpx 0;
+}
+
+.address-item {
+  position: relative;
+  margin-bottom: 20rpx;
+  padding: 24rpx;
+  border-radius: 30rpx;
+  background: #ffffff;
+  box-shadow: 0 10rpx 32rpx rgba(24, 33, 26, 0.045);
+  border: 2rpx solid transparent;
+}
+
+.address-item.default {
+  border-color: #d7ff5e;
+}
+
+.address-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.address-tags {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.address-type {
+  height: 34rpx;
+  padding: 0 11rpx;
+  border-radius: 7rpx;
+  background: #18211a;
+  color: #d7ff5e;
+  font-size: 16rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+.default-tag {
+  height: 34rpx;
+  padding: 0 10rpx;
+  border-radius: 7rpx;
+  background: #eef7d5;
+  color: #5b741c;
+  font-size: 15rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.address-person {
+  display: flex;
+  align-items: baseline;
+  gap: 10rpx;
+}
+
+.address-name {
+  font-size: 27rpx;
+  font-weight: 800;
+}
+
+.address-phone {
+  color: #899187;
+  font-size: 19rpx;
+}
+
+.address-detail {
+  display: block;
+  margin-top: 16rpx;
+  color: #283228;
+  font-size: 29rpx;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.address-note {
+  display: block;
+  margin-top: 6rpx;
+  color: #a0a69d;
+  font-size: 18rpx;
+}
+
+.address-item-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f0eee8;
+}
+
+.address-actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.address-action {
+  display: flex;
+  align-items: center;
+  gap: 5rpx;
+  color: #8a9288;
+  font-size: 18rpx;
+}
+
+.address-action image {
+  width: 21rpx;
+  height: 21rpx;
+  opacity: 0.55;
+}
+
+.address-action.danger {
+  color: #c77a68;
+}
+
+.address-checked {
+  width: 42rpx;
+  height: 42rpx;
+  border-radius: 50%;
+  background: #d7ff5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.address-checked image {
+  width: 21rpx;
+  height: 21rpx;
+}
+
+.addresses-space {
+  height: 20rpx;
+}
+
+.add-address-bar {
+  position: fixed;
+  left: 32rpx;
+  right: 32rpx;
+  bottom: calc(24rpx + env(safe-area-inset-bottom));
+  z-index: 800;
+  height: 102rpx;
+  padding: 0 18rpx 0 14rpx;
+  border-radius: 51rpx;
+  background: #18211a;
+  box-shadow: 0 16rpx 40rpx rgba(24, 33, 26, 0.24);
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  color: #ffffff;
+}
+
+.add-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #d7ff5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-icon image {
+  width: 34rpx;
+  height: 34rpx;
+}
+
+.add-address-bar > text {
+  flex: 1;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.add-arrow {
+  width: 28rpx;
+  height: 28rpx;
+  margin-right: 14rpx;
+}
+
+.address-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(12, 18, 14, 0.46);
+  backdrop-filter: blur(4rpx);
+  display: flex;
+  align-items: flex-end;
+}
+
+.address-sheet {
+  width: 100%;
+  padding: 16rpx 30rpx calc(34rpx + env(safe-area-inset-bottom));
+  border-radius: 40rpx 40rpx 0 0;
+  background: #f9f8f3;
+  animation: sheetUp 0.28s ease both;
+}
+
+@keyframes sheetUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.sheet-handle {
+  width: 68rpx;
+  height: 7rpx;
+  border-radius: 4rpx;
+  background: #d4d1c9;
+  margin: 0 auto 24rpx;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sheet-eyebrow {
+  display: block;
+  font-size: 15rpx;
+  letter-spacing: 3rpx;
+  color: #9ba198;
+  font-weight: 700;
+}
+
+.sheet-title {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 38rpx;
+  font-weight: 900;
+  letter-spacing: -1rpx;
+}
+
+.sheet-close {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 50%;
+  background: #eceae3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sheet-close image {
+  width: 27rpx;
+  height: 27rpx;
+}
+
+.label-row {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 24rpx;
+}
+
+.label-chip {
+  height: 58rpx;
+  padding: 0 24rpx;
+  border-radius: 29rpx;
+  background: #ecebe4;
+  color: #6e776e;
+  font-size: 21rpx;
+  display: flex;
+  align-items: center;
+}
+
+.label-chip.active {
+  background: #18211a;
+  color: #d7ff5e;
+  font-weight: 700;
+}
+
+.form-card {
+  margin-top: 20rpx;
+  padding: 0 22rpx;
+  border-radius: 28rpx;
+  background: #ffffff;
+}
+
+.form-row {
+  min-height: 98rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.form-label {
+  width: 130rpx;
+  flex-shrink: 0;
+  color: #596359;
+  font-size: 21rpx;
+  font-weight: 600;
+}
+
+.form-input {
+  flex: 1;
+  height: 80rpx;
+  font-size: 22rpx;
+  color: #242e24;
+  text-align: right;
+}
+
+.form-placeholder {
+  color: #b2b7af;
+  font-size: 20rpx;
+}
+
+.form-line {
+  height: 1rpx;
+  background: #f0eee8;
+  margin-left: 146rpx;
+}
+
+.save-address-btn {
+  height: 94rpx;
+  margin-top: 24rpx;
+  border-radius: 47rpx;
+  background: #18211a;
+  color: #d7ff5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14rpx;
+  font-size: 26rpx;
+  font-weight: 800;
+}
+
+.save-address-btn image {
+  width: 28rpx;
+  height: 28rpx;
+}

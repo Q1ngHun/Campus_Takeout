@@ -1,0 +1,103 @@
+<view class="page-plain coupons-page">
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+
+  <view class="coupons-nav">
+    <view class="nav-back" bindtap="goBack">
+      <image src="/assets/icons/chevron-left.svg" />
+    </view>
+    <text class="coupons-nav-title">优惠券</text>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <view class="coupons-hero">
+    <view class="coupons-hero-top">
+      <text class="hero-eyebrow">SUDA COUPONS</text>
+      <view class="hero-claim" bindtap="claimMore">
+        <text>领券中心</text>
+        <image src="/assets/icons/arrow.svg" />
+      </view>
+    </view>
+    <text class="hero-title">这周，</text>
+    <text class="hero-title hero-title-line">吃点好的。</text>
+    <view class="hero-saving">
+      <text class="saving-label">可用优惠总额</text>
+      <view class="saving-price">
+        <text class="saving-symbol">¥</text>
+        <text class="saving-number">{{totalSave}}</text>
+      </view>
+    </view>
+    <view class="hero-spark">✦</view>
+    <view class="hero-orbit"></view>
+  </view>
+
+  <view class="coupon-tabs">
+    <view
+      class="coupon-tab {{activeTab === item.id ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="switchTab"
+    >
+      <text>{{item.label}}</text>
+      <text class="tab-badge" wx:if="{{item.count}}">{{item.count}}</text>
+    </view>
+  </view>
+
+  <view class="coupon-list" wx:if="{{coupons.length}}">
+    <view class="coupon-ticket status-{{item.status}}" wx:for="{{coupons}}" wx:key="id">
+      <view class="ticket-left">
+        <view class="ticket-value">
+          <text class="ticket-symbol" wx:if="{{item.type === '满减'}}">¥</text>
+          <text class="ticket-number" wx:if="{{item.type === '满减'}}">{{item.amount}}</text>
+          <text class="ticket-discount" wx:elif="{{item.type === '折扣'}}">{{item.amount}}<text>折</text></text>
+          <text class="ticket-free" wx:else>免配送</text>
+        </view>
+        <text class="ticket-threshold">{{item.threshold ? '满 ' + item.threshold + ' 可用' : '无门槛'}}</text>
+        <view class="ticket-notch top"></view>
+        <view class="ticket-notch bottom"></view>
+      </view>
+
+      <view class="ticket-right">
+        <view class="ticket-head">
+          <view class="ticket-title">{{item.title}}</view>
+          <view class="ticket-type">{{item.type}}</view>
+        </view>
+        <text class="ticket-desc">{{item.desc}}</text>
+        <text class="ticket-scope">{{item.scope}}</text>
+        <view class="ticket-foot">
+          <text class="ticket-expire">有效期至 {{item.expire}}</text>
+          <view
+            class="ticket-use"
+            wx:if="{{item.status === 'available'}}"
+            data-id="{{item.id}}"
+            bindtap="useCoupon"
+          >去使用</view>
+          <view class="ticket-state" wx:else>{{item.status === 'used' ? '已使用' : '已过期'}}</view>
+        </view>
+      </view>
+
+      <view class="ticket-stamp" wx:if="{{item.status !== 'available'}}">{{item.status === 'used' ? 'USED' : 'EXPIRED'}}</view>
+    </view>
+  </view>
+
+  <empty-state
+    wx:else
+    icon="coupon"
+    title="{{activeTab === 'available' ? '暂时没有可用优惠券' : '这里还没有记录'}}"
+    desc="{{activeTab === 'available' ? '去领券中心看看，校园专享福利每周更新' : '每一张券，都替你省下过一顿好味'}}"
+    action="{{activeTab === 'available' ? '去领券' : ''}}"
+    bind:action="claimMore"
+  />
+
+  <view class="coupon-rule">
+    <view class="rule-head">
+      <text class="rule-title">使用说明</text>
+      <text class="rule-sub">RULES</text>
+    </view>
+    <text class="rule-line">· 优惠券仅限校园宿达平台使用，不可折现</text>
+    <text class="rule-line">· 单笔订单限用一张，不与其他优惠叠加</text>
+    <text class="rule-line">· 退款时优惠券按原规则退回</text>
+  </view>
+
+  <view class="coupons-space"></view>
+</view>
