@@ -1,7 +1,8 @@
-const mock = require('../../data/mock')
+const { useCampusStore } = require('../../store/campus')
 const cartUtil = require('../../utils/cart')
+const ui = require('../../utils/ui')
+const tabbar = require('../../utils/tabbar')
 
-const REVIEW_KEY = 'suda_reviews_v1'
 const REVIEW_OPTIONS = ['准时送达', '包装完好', '味道超赞', '分量很足', '骑手有礼貌']
 
 function buildReviewOptions(selected) {
@@ -32,50 +33,61 @@ Page({
     reviewTags: ['准时送达', '包装完好', '味道超赞'],
     reviewOptions: buildReviewOptions(),
     reviewStarList: [1, 2, 3, 4, 5],
-    reviewText: ''
+    reviewText: '',
+    dataSource: 'mock'
   },
 
   onLoad() {
+    this.store = useCampusStore()
     this.setData({ statusBarHeight: getApp().globalData.statusBarHeight })
+
+    const page = this
+    this.unsubscribe = this.store.$bind(this, function (state) {
+      const all = page.store.allOrders
+      const counts = {
+        all: all.length,
+        ongoing: all.filter(function (item) {
+          return item.status === 'delivering' || item.status === 'preparing'
+        }).length,
+        review: all.filter(function (item) { return item.status === 'done' }).length
+      }
+      const tabs = page.data.tabs.map(function (tab) {
+        return Object.assign({}, tab, { count: counts[tab.id] })
+      })
+      return {
+        allOrders: all,
+        counts: counts,
+        tabs: tabs,
+        dataSource: state.dataSource
+      }
+    })
+
+    this.store.bootstrap()
   },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 1 })
+      this.getTabBar().setData({ selected: 1, hidden: false })
     }
     this.loadOrders()
   },
 
+  onUnload() {
+    if (this.unsubscribe) this.unsubscribe()
+  },
+
   loadOrders() {
-    let saved = []
-    try {
-      saved = wx.getStorageSync('suda_orders_v1') || []
-    } catch (e) {
-      saved = []
-    }
-    let reviewed = []
-    try {
-      reviewed = wx.getStorageSync(REVIEW_KEY) || []
-    } catch (e) {
-      reviewed = []
-    }
-
-    const all = saved.concat(mock.orders).map(function (order) {
-      if (reviewed.indexOf(order.id) > -1 && order.status === 'done') {
-        return Object.assign({}, order, { status: 'rated', statusText: '已完成' })
-      }
-      return order
-    })
-
+    const all = this.store.allOrders
     const counts = {
       all: all.length,
-      ongoing: all.filter(function (item) { return item.status === 'delivering' || item.status === 'preparing' }).length,
+      ongoing: all.filter(function (item) {
+        return item.status === 'delivering' || item.status === 'preparing'
+      }).length,
       review: all.filter(function (item) { return item.status === 'done' }).length
     }
     const tabs = this.data.tabs.map(function (tab) {
       return Object.assign({}, tab, { count: counts[tab.id] })
     })
-
     this.setData({ allOrders: all, counts: counts, tabs: tabs })
     this.applyFilter(this.data.activeTab, all)
   },
@@ -84,14 +96,18 @@ Page({
     const all = source || this.data.allOrders
     let list = all
     if (tab === 'ongoing') {
-      list = all.filter(function (item) { return item.status === 'delivering' || item.status === 'preparing' })
+      list = all.filter(function (item) {
+        return item.status === 'delivering' || item.status === 'preparing'
+      })
     } else if (tab === 'review') {
       list = all.filter(function (item) { return item.status === 'done' })
     }
 
     let activeOrder = null
     if (tab !== 'review') {
-      activeOrder = list.find(function (item) { return item.status === 'delivering' || item.status === 'preparing' }) || null
+      activeOrder = list.find(function (item) {
+        return item.status === 'delivering' || item.status === 'preparing'
+      }) || null
     }
     const displayOrders = activeOrder
       ? list.filter(function (item) { return item.id !== activeOrder.id })
@@ -116,11 +132,15 @@ Page({
   contactRider() {
     const order = this.data.activeOrder
     if (!order) return
-    wx.showModal({
+    const page = this
+    tabbar.hideTabBar(this)
+    ui.alert({
       title: '联系骑手',
-      content: order.rider.name + '  ' + order.rider.phone + '\n正在为你飞奔，请耐心等待。',
-      confirmText: '知道了',
-      showCancel: false
+      message: order.rider.name + '  ' + order.rider.phone + '\n正在为你飞奔，请耐心等待。'
+    }).then(function () {
+      tabbar.showTabBar(page)
+    }).catch(function () {
+      tabbar.showTabBar(page)
     })
   },
 
@@ -128,13 +148,17 @@ Page({
     const id = e.currentTarget.dataset.id
     const order = this.data.allOrders.find(function (item) { return item.id === id })
     if (!order) return
-    const shop = mock.merchants.find(function (item) { return item.id === order.shopId }) || mock.merchants[0]
+    const shop = this.store.merchants.find(function (item) { return item.id === order.shopId }) || this.store.merchants[0]
+    if (!shop) {
+      ui.toast('店铺暂不可用')
+      return
+    }
     cartUtil.clearCart()
     order.items.forEach(function (item, index) {
       const dish = shop.dishes.find(function (d) { return d.name === item.name }) || shop.dishes[index] || shop.dishes[0]
       cartUtil.addItem(dish, shop, item.qty)
     })
-    wx.showToast({ title: '已加入购物车', icon: 'none' })
+    ui.toast('已加入购物车')
     setTimeout(function () {
       wx.navigateTo({ url: '/pages/cart/cart' })
     }, 500)
@@ -143,6 +167,7 @@ Page({
   openReview(e) {
     const id = e.currentTarget.dataset.id
     const order = this.data.allOrders.find(function (item) { return item.id === id })
+    tabbar.hideTabBar(this)
     this.setData({
       reviewVisible: true,
       reviewOrder: order,
@@ -154,13 +179,14 @@ Page({
   },
 
   closeReview() {
+    tabbar.showTabBar(this)
     this.setData({ reviewVisible: false })
   },
 
   noop() {},
 
-  setStar(e) {
-    this.setData({ reviewStars: Number(e.currentTarget.dataset.value) })
+  onRateChange(e) {
+    this.setData({ reviewStars: Number(e.detail) })
   },
 
   toggleReviewTag(e) {
@@ -178,23 +204,17 @@ Page({
     })
   },
 
-  onReviewInput(e) {
-    this.setData({ reviewText: e.detail.value })
+  onReviewChange(e) {
+    this.setData({ reviewText: e.detail || '' })
   },
 
   submitReview() {
     const order = this.data.reviewOrder
     if (!order) return
-    let reviewed = []
-    try {
-      reviewed = wx.getStorageSync(REVIEW_KEY) || []
-    } catch (e) {}
-    if (reviewed.indexOf(order.id) === -1) reviewed.push(order.id)
-    try {
-      wx.setStorageSync(REVIEW_KEY, reviewed)
-    } catch (e) {}
+    this.store.markReviewed(order.id)
+    tabbar.showTabBar(this)
     this.setData({ reviewVisible: false })
-    wx.showToast({ title: '感谢你的认真评价', icon: 'none' })
+    ui.toast('感谢你的认真评价')
     this.loadOrders()
   },
 

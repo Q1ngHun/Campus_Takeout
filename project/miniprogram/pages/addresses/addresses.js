@@ -1,7 +1,5 @@
-const mock = require('../../data/mock')
-
-const ADDRESS_KEY = 'suda_addresses_v1'
-const SELECTED_KEY = 'suda_selected_address_v1'
+const { useCampusStore } = require('../../store/campus')
+const ui = require('../../utils/ui')
 
 Page({
   data: {
@@ -9,6 +7,7 @@ Page({
     addresses: [],
     selectMode: false,
     sheetVisible: false,
+    saving: false,
     editingIndex: -1,
     labels: ['宿舍', '教学楼', '其他'],
     draft: {
@@ -21,28 +20,25 @@ Page({
   },
 
   onLoad(options) {
+    this.store = useCampusStore()
     this.setData({
       statusBarHeight: getApp().globalData.statusBarHeight,
       selectMode: options.select === '1'
     })
+
+    this.unsubscribe = this.store.$bind(this, function (state) {
+      return { addresses: state.addresses || [] }
+    })
+    this.store.bootstrap()
     this.loadAddresses()
   },
 
-  loadAddresses() {
-    let list = []
-    try {
-      list = wx.getStorageSync(ADDRESS_KEY) || []
-    } catch (e) {}
-    if (!list.length) {
-      list = mock.addresses.slice()
-      try { wx.setStorageSync(ADDRESS_KEY, list) } catch (e) {}
-    }
-    this.setData({ addresses: list })
+  onUnload() {
+    if (this.unsubscribe) this.unsubscribe()
   },
 
-  saveAddresses(list) {
-    try { wx.setStorageSync(ADDRESS_KEY, list) } catch (e) {}
-    this.setData({ addresses: list })
+  loadAddresses() {
+    this.setData({ addresses: this.store.addresses })
   },
 
   goBack() {
@@ -55,18 +51,17 @@ Page({
 
   selectAddress(e) {
     const id = e.currentTarget.dataset.id
-    const list = this.data.addresses.map(function (item) {
-      return Object.assign({}, item, { default: item.id === id })
-    })
-    this.saveAddresses(list)
-    const selected = list.find(function (item) { return item.id === id })
-    try { wx.setStorageSync(SELECTED_KEY, selected) } catch (e) {}
+    const address = this.store.addresses.find(function (item) { return item.id === id })
+    if (!address) return
+
+    this.store.selectAddress(address)
+    this.loadAddresses()
 
     if (this.data.selectMode) {
-      wx.showToast({ title: '已选择收货地址', icon: 'none' })
+      ui.toast('已选择收货地址')
       setTimeout(function () { wx.navigateBack() }, 350)
     } else {
-      wx.showToast({ title: '已设为默认地址', icon: 'none' })
+      ui.toast('已设为默认地址')
     }
   },
 
@@ -86,10 +81,12 @@ Page({
   openEdit(e) {
     const index = Number(e.currentTarget.dataset.index)
     const item = this.data.addresses[index]
+    if (!item) return
     this.setData({
       sheetVisible: true,
       editingIndex: index,
       draft: {
+        id: item.id,
         name: item.name,
         phone: item.phone,
         label: item.label,
@@ -107,8 +104,9 @@ Page({
 
   onField(e) {
     const field = e.currentTarget.dataset.field
+    const value = typeof e.detail === 'string' ? e.detail : e.detail.value
     const draft = Object.assign({}, this.data.draft)
-    draft[field] = e.detail.value
+    draft[field] = value
     this.setData({ draft: draft })
   },
 
@@ -120,50 +118,53 @@ Page({
   saveAddress() {
     const draft = this.data.draft
     if (!draft.name.trim()) {
-      wx.showToast({ title: '请填写收货人', icon: 'none' })
+      ui.toast('请填写收货人')
       return
     }
     if (!draft.phone.trim()) {
-      wx.showToast({ title: '请填写联系电话', icon: 'none' })
+      ui.toast('请填写联系电话')
       return
     }
     if (!draft.detail.trim()) {
-      wx.showToast({ title: '请填写详细地址', icon: 'none' })
+      ui.toast('请填写详细地址')
       return
     }
-    const list = this.data.addresses.slice()
-    if (this.data.editingIndex > -1) {
-      list[this.data.editingIndex] = Object.assign({}, list[this.data.editingIndex], draft)
-    } else {
-      list.unshift({
-        id: 'a' + Date.now(),
+
+    const page = this
+    this.setData({ saving: true })
+    const payload = this.data.editingIndex > -1
+      ? Object.assign({}, draft)
+      : {
         name: draft.name,
         phone: draft.phone,
         label: draft.label,
         detail: draft.detail,
-        note: draft.note,
-        default: list.length === 0
-      })
-    }
-    this.saveAddresses(list)
-    this.setData({ sheetVisible: false })
-    wx.showToast({ title: '地址已保存', icon: 'none' })
+        note: draft.note
+      }
+
+    this.store.saveAddress(payload).then(function () {
+      page.setData({ sheetVisible: false, saving: false })
+      page.loadAddresses()
+      ui.toast('地址已保存')
+    }).catch(function () {
+      page.setData({ saving: false })
+      ui.toast('保存失败，请稍后再试')
+    })
   },
 
   deleteAddress(e) {
-    const self = this
     const index = Number(e.currentTarget.dataset.index)
     const item = this.data.addresses[index]
-    wx.showModal({
+    if (!item) return
+    const page = this
+
+    ui.confirm({
       title: '删除地址',
-      content: '确定删除「' + item.detail + '」吗？',
-      confirmColor: '#18211a',
-      success: function (res) {
-        if (!res.confirm) return
-        const list = self.data.addresses.filter(function (_, i) { return i !== index })
-        if (item.default && list.length) list[0].default = true
-        self.saveAddresses(list)
-      }
-    })
+      message: '确定删除「' + item.detail + '」吗？'
+    }).then(function () {
+      page.store.deleteAddress(item.id)
+      page.loadAddresses()
+      ui.toast('地址已删除')
+    }).catch(function () {})
   }
 })

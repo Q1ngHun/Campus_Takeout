@@ -796,3 +796,14 @@
   width: 28rpx;
   height: 28rpx;
 }
+
+
+.home-notice {
+  margin: 0 40rpx 24rpx;
+  border-radius: 24rpx;
+  overflow: hidden;
+  font-size: 22rpx;
+  line-height: 64rpx;
+  --notice-bar-height: 64rpx;
+}
+

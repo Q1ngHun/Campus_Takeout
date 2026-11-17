@@ -105,13 +105,14 @@
           <image src="/assets/icons/edit.svg" />
         </view>
         <text class="option-label">订单备注</text>
-        <input
-          class="remark-input"
+        <van-field
+          value="{{remark}}"
+          custom-class="remark-van-field"
+          border="{{false}}"
           maxlength="40"
           placeholder="口味、门禁或送达要求"
           placeholder-class="remark-placeholder"
-          value="{{remark}}"
-          bindinput="onRemarkInput"
+          bind:change="onRemarkChange"
         />
       </view>
 
@@ -168,17 +169,17 @@
 
     <view class="checkout-space"></view>
 
-    <view class="submit-bar">
-      <view class="submit-total">
-        <text class="submit-label">合计</text>
-        <text class="submit-price"><text>¥</text>{{total}}</text>
-        <text class="submit-saved" wx:if="{{discount}}">已省 ¥{{discount}}</text>
-      </view>
-      <view class="submit-btn {{submitting ? 'submitting' : ''}}" bindtap="submitOrder">
-        <text>{{submitting ? '正在下单…' : '提交订单'}}</text>
-        <image src="/assets/icons/arrow.svg" />
-      </view>
-    </view>
+    <van-submit-bar
+      price="{{totalPrice}}"
+      label="实付"
+      button-text="提交订单"
+      button-type="default"
+      button-class="checkout-submit-btn"
+      loading="{{submitting}}"
+      tip="{{discount ? '已省 ¥' + discount : '校园安心送 · 超时赔付'}}"
+      safe-area-inset-bottom
+      bind:submit="submitOrder"
+    />
   </block>
 
   <empty-state
@@ -189,4 +190,17 @@
     action="去首页点单"
     bind:action="goHome"
   />
+
+  <van-action-sheet
+    z-index="{{1000}}"
+    show="{{sheetVisible}}"
+    actions="{{sheetActions}}"
+    title="{{sheetTitle}}"
+    cancel-text="{{sheetCancelText}}"
+    bind:select="onSheetSelect"
+    bind:close="closeSheet"
+    bind:cancel="closeSheet"
+  />
+  <van-dialog id="van-dialog" z-index="{{1000}}" />
+  <van-toast id="van-toast" />
 </view>

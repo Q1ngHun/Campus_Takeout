@@ -544,7 +544,30 @@
 }
 
 .checkout-space {
-  height: 20rpx;
+  height: 190rpx;
+}
+
+.remark-van-field {
+  flex: 1;
+  padding: 0 !important;
+  background: transparent !important;
+  font-size: 19rpx;
+}
+
+.remark-van-field .van-field__control {
+  text-align: right;
+  color: #303a30;
+  font-size: 19rpx;
+}
+
+.checkout-submit-btn {
+  background: #d7ff5e !important;
+  border: none !important;
+  color: #18211a !important;
+  font-weight: 900 !important;
+  height: 84rpx !important;
+  line-height: 84rpx !important;
+  border-radius: 42rpx !important;
 }
 
 .submit-bar {

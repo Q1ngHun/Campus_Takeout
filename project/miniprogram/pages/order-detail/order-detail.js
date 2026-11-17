@@ -1,7 +1,6 @@
-const mock = require('../../data/mock')
+const { useCampusStore } = require('../../store/campus')
 const cartUtil = require('../../utils/cart')
-
-const ORDER_KEY = 'suda_orders_v1'
+const ui = require('../../utils/ui')
 
 Page({
   data: {
@@ -11,10 +10,13 @@ Page({
     statusTitle: '',
     statusDesc: '',
     progress: [],
+    stepActive: 0,
+    timelineSteps: [],
     riderVisible: false
   },
 
   onLoad(options) {
+    this.store = useCampusStore()
     this.setData({
       statusBarHeight: getApp().globalData.statusBarHeight,
       success: options.success === '1'
@@ -23,13 +25,17 @@ Page({
   },
 
   loadOrder(id) {
-    let saved = []
-    try {
-      saved = wx.getStorageSync(ORDER_KEY) || []
-    } catch (e) {}
-    const order = saved.concat(mock.orders).find(function (item) { return item.id === id }) || saved[0] || mock.orders[0]
-    if (!order) return
+    const page = this
+    this.store.fetchOrder(id).then(function (order) {
+      if (!order) {
+        ui.toast('订单不存在')
+        return
+      }
+      page.applyOrder(order)
+    })
+  },
 
+  applyOrder(order) {
     let statusTitle = order.statusText
     let statusDesc = order.statusNote
     if (order.status === 'preparing') {
@@ -62,6 +68,10 @@ Page({
       statusTitle: statusTitle,
       statusDesc: statusDesc,
       progress: progress,
+      stepActive: current,
+      timelineSteps: (order.timeline || []).map(function (item) {
+        return { text: item.text, desc: item.time || '待更新' }
+      }),
       riderVisible: order.status === 'delivering' || order.status === 'preparing'
     })
   },
@@ -81,32 +91,32 @@ Page({
   contactRider() {
     const rider = this.data.order.rider
     if (!rider) return
-    wx.showModal({
+    ui.alert({
       title: '联系骑手',
-      content: rider.name + '  ' + rider.phone + '\n正在为你飞奔，请保持电话畅通。',
-      confirmText: '知道了',
-      showCancel: false
+      message: rider.name + '  ' + rider.phone + '\n正在为你飞奔，请保持电话畅通。'
     })
   },
 
   contactShop() {
-    wx.showModal({
+    ui.alert({
       title: '联系商家',
-      content: this.data.order.shopName + '\n校园直送专线：400-0712-326',
-      confirmText: '知道了',
-      showCancel: false
+      message: this.data.order.shopName + '\n校园直送专线：400-0712-326'
     })
   },
 
   reorder() {
     const order = this.data.order
-    const shop = mock.merchants.find(function (item) { return item.id === order.shopId }) || mock.merchants[0]
+    const shop = this.store.merchants.find(function (item) { return item.id === order.shopId }) || this.store.merchants[0]
+    if (!shop) {
+      ui.toast('店铺暂不可用')
+      return
+    }
     cartUtil.clearCart()
     order.items.forEach(function (item, index) {
       const dish = shop.dishes.find(function (d) { return d.name === item.name }) || shop.dishes[index] || shop.dishes[0]
       cartUtil.addItem(dish, shop, item.qty)
     })
-    wx.showToast({ title: '已加入购物车', icon: 'none' })
+    ui.toast('已加入购物车')
     setTimeout(function () {
       wx.navigateTo({ url: '/pages/cart/cart' })
     }, 450)
@@ -116,24 +126,27 @@ Page({
     wx.switchTab({ url: '/pages/orders/orders' })
   },
 
-  deleteOrder() {
-    const self = this
-    wx.showModal({
-      title: '删除订单',
-      content: '删除后将无法恢复该订单记录。',
-      confirmColor: '#18211a',
-      success: function (res) {
-        if (!res.confirm) return
-        let saved = []
-        try { saved = wx.getStorageSync(ORDER_KEY) || [] } catch (e) {}
-        const next = saved.filter(function (item) { return item.id !== self.data.order.id })
-        try { wx.setStorageSync(ORDER_KEY, next) } catch (e) {}
-        wx.showToast({ title: '已删除', icon: 'none' })
-        setTimeout(function () {
-          wx.switchTab({ url: '/pages/orders/orders' })
-        }, 400)
+  copyOrderId() {
+    wx.setClipboardData({
+      data: this.data.order.id,
+      success: function () {
+        ui.toast('订单号已复制')
       }
     })
+  },
+
+  deleteOrder() {
+    const page = this
+    ui.confirm({
+      title: '删除订单',
+      message: '删除后将无法恢复该订单记录。'
+    }).then(function () {
+      page.store.deleteLocalOrder(page.data.order.id)
+      ui.toast('已删除')
+      setTimeout(function () {
+        wx.switchTab({ url: '/pages/orders/orders' })
+      }, 400)
+    }).catch(function () {})
   },
 
   onShareAppMessage() {

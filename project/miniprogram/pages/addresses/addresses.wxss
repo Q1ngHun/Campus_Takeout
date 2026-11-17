@@ -227,6 +227,15 @@
   align-items: center;
 }
 
+.address-default-tag {
+  height: 34rpx !important;
+  padding: 0 12rpx !important;
+  border-radius: 7rpx !important;
+  font-size: 15rpx !important;
+  font-weight: 600 !important;
+  line-height: 34rpx !important;
+}
+
 .address-person {
   display: flex;
   align-items: baseline;
@@ -451,8 +460,18 @@
 
 .form-card {
   margin-top: 20rpx;
-  padding: 0 22rpx;
+  padding: 0 6rpx;
   border-radius: 28rpx;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.address-van-field {
+  --field-label-color: #596359;
+  --field-input-text-color: #242e24;
+  --field-placeholder-text-color: #b2b7af;
+  --field-label-width: 130rpx;
+  --cell-vertical-padding: 22rpx;
   background: #ffffff;
 }
 

@@ -52,7 +52,7 @@
       <view class="address-item-top">
         <view class="address-tags">
           <view class="address-type">{{item.label}}</view>
-          <view class="default-tag" wx:if="{{item.default}}">默认</view>
+          <van-tag wx:if="{{item.default}}" round custom-class="address-default-tag" color="#18211a" text-color="#d7ff5e">默认</van-tag>
         </view>
         <view class="address-person">
           <text class="address-name">{{item.name}}</text>
@@ -104,8 +104,15 @@
     <image class="add-arrow" src="/assets/icons/arrow.svg" />
   </view>
 
-  <view class="address-mask" wx:if="{{sheetVisible}}" bindtap="closeSheet">
-    <view class="address-sheet" catchtap="noop">
+  <van-popup
+    z-index="{{1000}}"
+    show="{{sheetVisible}}"
+    position="bottom"
+    round
+    custom-style="background: transparent;"
+    bind:close="closeSheet"
+  >
+    <view class="address-sheet">
       <view class="sheet-handle"></view>
       <view class="sheet-head">
         <view>
@@ -128,31 +135,55 @@
       </view>
 
       <view class="form-card">
-        <view class="form-row">
-          <text class="form-label">收货人</text>
-          <input class="form-input" data-field="name" value="{{draft.name}}" placeholder="怎么称呼你" placeholder-class="form-placeholder" bindinput="onField" />
-        </view>
-        <view class="form-line"></view>
-        <view class="form-row">
-          <text class="form-label">手机号</text>
-          <input class="form-input" data-field="phone" value="{{draft.phone}}" type="text" placeholder="方便骑手联系你" placeholder-class="form-placeholder" bindinput="onField" />
-        </view>
-        <view class="form-line"></view>
-        <view class="form-row">
-          <text class="form-label">详细地址</text>
-          <input class="form-input" data-field="detail" value="{{draft.detail}}" placeholder="如：北苑 7 号楼 502 室" placeholder-class="form-placeholder" bindinput="onField" />
-        </view>
-        <view class="form-line"></view>
-        <view class="form-row">
-          <text class="form-label">备注</text>
-          <input class="form-input" data-field="note" value="{{draft.note}}" placeholder="门禁、放置位置等" placeholder-class="form-placeholder" bindinput="onField" />
-        </view>
+        <van-field
+          label="收货人"
+          value="{{draft.name}}"
+          placeholder="怎么称呼你"
+          input-align="right"
+          border="{{true}}"
+          custom-class="address-van-field"
+          data-field="name"
+          bind:change="onField"
+        />
+        <van-field
+          label="手机号"
+          value="{{draft.phone}}"
+          placeholder="方便骑手联系你"
+          input-align="right"
+          border="{{true}}"
+          custom-class="address-van-field"
+          data-field="phone"
+          bind:change="onField"
+        />
+        <van-field
+          label="详细地址"
+          value="{{draft.detail}}"
+          placeholder="如：北苑 7 号楼 502 室"
+          input-align="right"
+          border="{{true}}"
+          custom-class="address-van-field"
+          data-field="detail"
+          bind:change="onField"
+        />
+        <van-field
+          label="备注"
+          value="{{draft.note}}"
+          placeholder="门禁、放置位置等"
+          input-align="right"
+          border="{{false}}"
+          custom-class="address-van-field"
+          data-field="note"
+          bind:change="onField"
+        />
       </view>
 
-      <view class="save-address-btn" bindtap="saveAddress">
-        <text>保存地址</text>
+      <view class="save-address-btn {{saving ? 'saving' : ''}}" bindtap="saveAddress">
+        <text>{{saving ? '正在保存…' : '保存地址'}}</text>
         <image src="/assets/icons/arrow.svg" />
       </view>
     </view>
-  </view>
+  </van-popup>
+
+  <van-dialog id="van-dialog" z-index="{{1000}}" />
+  <van-toast id="van-toast" />
 </view>

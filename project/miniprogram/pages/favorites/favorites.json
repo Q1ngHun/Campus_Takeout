@@ -1,7 +1,9 @@
 {
   "usingComponents": {
     "merchant-card": "/components/merchant-card/index",
-    "empty-state": "/components/empty-state/index"
+    "empty-state": "/components/empty-state/index",
+    "van-dialog": "@vant/weapp/dialog/index",
+    "van-toast": "@vant/weapp/toast/index"
   },
   "navigationStyle": "custom"
 }

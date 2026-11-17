@@ -1,4 +1,5 @@
-const mock = require('../../data/mock')
+const { useCampusStore } = require('../../store/campus')
+const ui = require('../../utils/ui')
 
 Page({
   data: {
@@ -10,29 +11,52 @@ Page({
     ],
     activeTab: 'available',
     coupons: [],
-    totalSave: 0
+    totalSave: 0,
+    dataSource: 'mock'
   },
 
   onLoad() {
+    this.store = useCampusStore()
     this.setData({ statusBarHeight: getApp().globalData.statusBarHeight })
     this.loadCoupons()
+
+    const page = this
+    this.unsubscribe = this.store.$bind(this, function (state) {
+      return {
+        dataSource: state.dataSource,
+        totalSave: page.sumAvailable(state.coupons || [])
+      }
+    })
+    this.store.bootstrap()
+  },
+
+  onUnload() {
+    if (this.unsubscribe) this.unsubscribe()
+  },
+
+  sumAvailable(list) {
+    return list
+      .filter(function (item) { return item.status === 'available' })
+      .reduce(function (sum, item) { return sum + item.amount }, 0)
   },
 
   loadCoupons() {
+    const list = this.store.coupons
     const counts = {
-      available: mock.coupons.filter(function (item) { return item.status === 'available' }).length,
-      used: mock.coupons.filter(function (item) { return item.status === 'used' }).length,
-      expired: mock.coupons.filter(function (item) { return item.status === 'expired' }).length
+      available: list.filter(function (item) { return item.status === 'available' }).length,
+      used: list.filter(function (item) { return item.status === 'used' }).length,
+      expired: list.filter(function (item) { return item.status === 'expired' }).length
     }
     const tabs = this.data.tabs.map(function (tab) {
       return Object.assign({}, tab, { count: counts[tab.id] })
     })
-    const coupons = mock.coupons.filter(function (item) { return item.status === this.data.activeTab }, this)
-    const totalSave = mock.coupons
-      .filter(function (item) { return item.status === 'available' })
-      .reduce(function (sum, item) { return sum + item.amount }, 0)
-
-    this.setData({ tabs: tabs, coupons: coupons, totalSave: totalSave })
+    const activeTab = this.data.activeTab
+    const coupons = list.filter(function (item) { return item.status === activeTab })
+    this.setData({
+      tabs: tabs,
+      coupons: coupons,
+      totalSave: this.sumAvailable(list)
+    })
   },
 
   goBack() {
@@ -50,22 +74,26 @@ Page({
 
   useCoupon(e) {
     const id = e.currentTarget.dataset.id
-    const coupon = mock.coupons.find(function (item) { return item.id === id })
+    const coupon = this.store.coupons.find(function (item) { return item.id === id })
     if (!coupon) return
-    try { wx.setStorageSync('suda_selected_coupon_v1', coupon) } catch (e) {}
-    wx.showToast({ title: '已放入本次订单', icon: 'none' })
+    this.store.selectCoupon(coupon)
+    ui.toast('已放入本次订单')
     setTimeout(function () {
       wx.switchTab({ url: '/pages/home/home' })
     }, 500)
   },
 
   claimMore() {
-    wx.showModal({
+    const page = this
+    ui.confirm({
       title: '领券中心',
-      content: '本周还有 2 张校园专享券可领。\n完成学生认证后自动到账。',
-      confirmText: '知道了',
-      showCancel: false
-    })
+      message: '本周还有 2 张校园专享券可领。\n完成学生认证后自动到账。',
+      showCancelButton: false,
+      confirmButtonText: '知道了'
+    }).then(function () {
+      page.store.refreshCoupons()
+      page.loadCoupons()
+    }).catch(function () {})
   },
 
   goHome() {

@@ -311,6 +311,14 @@
   align-items: center;
 }
 
+.coupon-type-tag {
+  height: 32rpx !important;
+  padding: 0 10rpx !important;
+  border-radius: 6rpx !important;
+  font-size: 15rpx !important;
+  line-height: 32rpx !important;
+}
+
 .ticket-desc {
   margin-top: 7rpx;
   color: #8e968d;

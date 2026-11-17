@@ -1,31 +1,45 @@
-const mock = require('../../data/mock')
+const { useCampusStore } = require('../../store/campus')
 const cartUtil = require('../../utils/cart')
-
-const HISTORY_KEY = 'suda_search_history_v1'
+const ui = require('../../utils/ui')
 
 Page({
   data: {
     statusBarHeight: 20,
     keyword: '',
     history: [],
-    hotSearches: mock.hotSearches,
+    hotSearches: [],
     results: [],
     dishes: [],
     searched: false,
+    searching: false,
     resultCount: 0,
-    inspiration: mock.merchants[0]
+    dataSource: 'mock',
+    inspiration: null
   },
 
   onLoad() {
-    let history = []
-    try {
-      history = wx.getStorageSync(HISTORY_KEY) || []
-    } catch (e) {}
-    if (!history.length) history = mock.searchHistory.slice()
+    this.store = useCampusStore()
     this.setData({
       statusBarHeight: getApp().globalData.statusBarHeight,
-      history: history
+      history: this.store.searchHistory,
+      hotSearches: this.store.hotSearches,
+      inspiration: this.store.merchants[0] || null
     })
+
+    this.unsubscribe = this.store.$bind(this, function (state) {
+      return {
+        hotSearches: state.hotSearches || [],
+        history: state.searchHistory || [],
+        inspiration: (state.merchants || [])[0] || null
+      }
+    })
+
+    this.store.bootstrap()
+  },
+
+  onUnload() {
+    if (this.unsubscribe) this.unsubscribe()
+    if (this.searchTimer) clearTimeout(this.searchTimer)
   },
 
   goBack() {
@@ -36,18 +50,22 @@ Page({
     })
   },
 
-  onInput(e) {
-    const keyword = e.detail.value
+  onSearchChange(e) {
+    const keyword = typeof e.detail === 'string' ? e.detail : e.detail.value
     this.setData({ keyword: keyword })
-    if (keyword.trim()) {
-      this.performSearch(keyword.trim(), false)
-    } else {
-      this.setData({ results: [], dishes: [], searched: false, resultCount: 0 })
+    if (this.searchTimer) clearTimeout(this.searchTimer)
+    if (!keyword.trim()) {
+      this.setData({ results: [], dishes: [], searched: false, searching: false, resultCount: 0 })
+      return
     }
+    const page = this
+    this.searchTimer = setTimeout(function () {
+      page.performSearch(keyword.trim(), false)
+    }, 280)
   },
 
   clearInput() {
-    this.setData({ keyword: '', results: [], dishes: [], searched: false, resultCount: 0 })
+    this.setData({ keyword: '', results: [], dishes: [], searched: false, searching: false, resultCount: 0 })
   },
 
   doSearch() {
@@ -57,40 +75,27 @@ Page({
   },
 
   performSearch(keyword, save) {
-    const lower = keyword.toLowerCase()
-    const merchants = mock.merchants.filter(function (shop) {
-      const text = [shop.name, shop.en, shop.tags.join(' '), shop.hot.join(' '), shop.address].join(' ').toLowerCase()
-      return text.indexOf(lower) > -1
-    })
-    const dishes = []
-    mock.merchants.forEach(function (shop) {
-      shop.dishes.forEach(function (dish) {
-        if ((dish.name + dish.desc).toLowerCase().indexOf(lower) > -1) {
-          dishes.push(Object.assign({}, dish, { shopId: shop.id, shopName: shop.name, shop: shop }))
-        }
+    const page = this
+    this.setData({ searching: true })
+    return this.store.search(keyword).then(function (result) {
+      page.setData({
+        results: result.merchants || [],
+        dishes: (result.dishes || []).slice(0, 4),
+        searched: true,
+        searching: false,
+        resultCount: result.count || 0,
+        dataSource: result.source || 'mock'
       })
+      if (save) page.saveHistory(keyword)
+      return result
+    }).catch(function () {
+      page.setData({ searching: false, searched: true })
     })
-
-    this.setData({
-      results: merchants,
-      dishes: dishes.slice(0, 4),
-      searched: true,
-      resultCount: merchants.length + dishes.length
-    })
-
-    if (save) {
-      this.saveHistory(keyword)
-    }
   },
 
   saveHistory(keyword) {
-    let history = this.data.history.filter(function (item) { return item !== keyword })
-    history.unshift(keyword)
-    history = history.slice(0, 8)
-    this.setData({ history: history })
-    try {
-      wx.setStorageSync(HISTORY_KEY, history)
-    } catch (e) {}
+    this.store.saveSearchHistory(keyword)
+    this.setData({ history: this.store.searchHistory })
   },
 
   useKeyword(e) {
@@ -100,19 +105,15 @@ Page({
   },
 
   clearHistory() {
-    const self = this
-    wx.showModal({
+    const page = this
+    ui.confirm({
       title: '清空搜索历史',
-      content: '确定清空全部搜索记录吗？',
-      confirmColor: '#18211a',
-      success: function (res) {
-        if (!res.confirm) return
-        self.setData({ history: [] })
-        try {
-          wx.setStorageSync(HISTORY_KEY, [])
-        } catch (e) {}
-      }
-    })
+      message: '确定清空全部搜索记录吗？'
+    }).then(function () {
+      page.store.clearSearchHistory()
+      page.setData({ history: [] })
+      ui.toast('搜索历史已清空')
+    }).catch(function () {})
   },
 
   goShop(e) {
@@ -121,26 +122,30 @@ Page({
 
   quickAdd(e) {
     const shop = e.detail.merchant
-    if (!shop) return
+    if (!shop || !shop.dishes || !shop.dishes.length) return
     const result = cartUtil.addItem(shop.dishes[0], shop)
-    wx.showToast({ title: result.cleared ? '已切换店铺并加入' : '已加入购物车', icon: 'none' })
+    ui.toast(result.cleared ? '已切换店铺并加入' : '已加入购物车')
   },
 
   addDish(e) {
     const shopId = e.currentTarget.dataset.shopid
     const dishId = e.currentTarget.dataset.dishid
-    const shop = mock.merchants.find(function (item) { return item.id === shopId })
+    const shop = this.store.merchants.find(function (item) { return item.id === shopId })
     if (!shop) return
     const dish = shop.dishes.find(function (item) { return item.id === dishId })
     if (!dish) return
     const result = cartUtil.addItem(dish, shop)
-    wx.showToast({ title: result.cleared ? '已切换店铺并加入' : '已加入购物车', icon: 'none' })
+    ui.toast(result.cleared ? '已切换店铺并加入' : '已加入购物车')
   },
 
   surprise() {
-    const list = mock.merchants
+    const list = this.store.merchants.length ? this.store.merchants : []
+    if (!list.length) {
+      ui.toast('暂时没有可推荐的店铺')
+      return
+    }
     const shop = list[Math.floor(Math.random() * list.length)]
-    wx.showToast({ title: '今天吃 ' + shop.name, icon: 'none' })
+    ui.toast('今天吃 ' + shop.name)
     setTimeout(function () {
       wx.navigateTo({ url: '/pages/shop/shop?id=' + shop.id })
     }, 500)

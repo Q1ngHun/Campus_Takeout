@@ -1,10 +1,11 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import MerchantCard from '../components/MerchantCard.vue'
 import {
   addToCart,
   clearSearchHistory,
+  getShop,
   hotSearches,
   merchants,
   saveSearchHistory,
@@ -15,6 +16,34 @@ import {
 const router = useRouter()
 const keyword = ref('')
 const searched = ref(false)
+const remoteReady = ref(false)
+const remoteMerchants = ref([])
+const remoteDishes = ref([])
+let searchTimer = null
+
+watch(keyword, (value) => {
+  clearTimeout(searchTimer)
+  const query = value.trim()
+  if (!query) {
+    remoteReady.value = false
+    remoteMerchants.value = []
+    remoteDishes.value = []
+    return
+  }
+  searchTimer = setTimeout(async () => {
+    try {
+      const result = await state.searchRemote(query)
+      if (keyword.value.trim() !== query) return
+      remoteMerchants.value = result.merchants
+      remoteDishes.value = result.dishes
+      remoteReady.value = true
+    } catch (error) {
+      remoteReady.value = false
+    }
+  }, 280)
+})
+
+onBeforeUnmount(() => clearTimeout(searchTimer))
 
 const matchedMerchants = computed(() => {
   const query = keyword.value.trim().toLowerCase()
@@ -38,7 +67,9 @@ const matchedDishes = computed(() => {
   return list.slice(0, 4)
 })
 
-const resultCount = computed(() => matchedMerchants.value.length + matchedDishes.value.length)
+const resultMerchants = computed(() => remoteReady.value ? remoteMerchants.value : matchedMerchants.value)
+const resultDishes = computed(() => remoteReady.value ? remoteDishes.value : matchedDishes.value)
+const resultCount = computed(() => resultMerchants.value.length + resultDishes.value.length)
 
 function useKeyword(value) {
   keyword.value = value
@@ -67,7 +98,7 @@ function quickAdd(shop) {
 }
 
 function addDish(dish) {
-  addToCart(dish, dish.shop)
+  addToCart(dish, dish.shop || getShop(dish.shopId))
 }
 
 function surprise() {
@@ -149,14 +180,14 @@ function removeHistory() {
         <span>综合 <img src="/icons/chevron-down.svg" alt="" /></span>
       </div>
 
-      <div v-if="matchedMerchants.length" class="results-list">
-        <MerchantCard v-for="shop in matchedMerchants" :key="shop.id" :merchant="shop" @add="quickAdd" />
+      <div v-if="resultMerchants.length" class="results-list">
+        <MerchantCard v-for="shop in resultMerchants" :key="shop.id" :merchant="shop" @add="quickAdd" />
       </div>
 
-      <section v-if="matchedDishes.length" class="dish-section">
+      <section v-if="resultDishes.length" class="dish-section">
         <div class="dish-head"><strong>相关单品</strong><small>DISHES</small></div>
         <div class="dish-grid">
-          <article v-for="dish in matchedDishes" :key="dish.id" class="dish-card">
+          <article v-for="dish in resultDishes" :key="dish.id" class="dish-card">
             <img :src="dish.image" alt="" />
             <div>
               <strong>{{ dish.name }}</strong>

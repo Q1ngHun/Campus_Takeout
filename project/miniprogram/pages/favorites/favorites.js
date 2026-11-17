@@ -1,26 +1,39 @@
-const mock = require('../../data/mock')
-const favoriteUtil = require('../../utils/favorite')
+const { useCampusStore } = require('../../store/campus')
 const cartUtil = require('../../utils/cart')
+const ui = require('../../utils/ui')
 
 Page({
   data: {
     statusBarHeight: 20,
     favorites: [],
-    count: 0
+    count: 0,
+    dataSource: 'mock'
   },
 
   onLoad() {
+    this.store = useCampusStore()
     this.setData({ statusBarHeight: getApp().globalData.statusBarHeight })
+
+    const page = this
+    this.unsubscribe = this.store.$bind(this, function (state, store) {
+      return {
+        favorites: store.favoriteShops,
+        count: store.favoriteShops.length,
+        dataSource: state.dataSource
+      }
+    })
+    this.store.bootstrap()
   },
 
-  onShow() {
-    this.loadFavorites()
+  onUnload() {
+    if (this.unsubscribe) this.unsubscribe()
   },
 
   loadFavorites() {
-    const ids = favoriteUtil.getFavorites()
-    const favorites = mock.merchants.filter(function (shop) { return ids.indexOf(shop.id) > -1 })
-    this.setData({ favorites: favorites, count: favorites.length })
+    this.setData({
+      favorites: this.store.favoriteShops,
+      count: this.store.favoriteShops.length
+    })
   },
 
   goBack() {
@@ -37,16 +50,16 @@ Page({
 
   quickAdd(e) {
     const shop = e.detail.merchant
-    if (!shop) return
+    if (!shop || !shop.dishes || !shop.dishes.length) return
     const result = cartUtil.addItem(shop.dishes[0], shop)
-    wx.showToast({ title: result.cleared ? '已切换店铺并加入' : '已加入购物车', icon: 'none' })
+    ui.toast(result.cleared ? '已切换店铺并加入' : '已加入购物车')
   },
 
   removeFavorite(e) {
     const id = e.currentTarget.dataset.id
-    favoriteUtil.toggleFavorite(id)
+    this.store.toggleFavorite(id)
     this.loadFavorites()
-    wx.showToast({ title: '已取消收藏', icon: 'none' })
+    ui.toast('已取消收藏')
   },
 
   goHome() {

@@ -1,8 +1,9 @@
-const mock = require('../../data/mock')
-const cartUtil = require('../../utils/cart')
+const { useCampusStore } = require('../../store/campus')
+const ui = require('../../utils/ui')
 
-const ORDER_KEY = 'suda_orders_v1'
-const ADDRESS_KEY = 'suda_selected_address_v1'
+const DELIVERY_OPTIONS = ['立即送出 · 预计 12:35 送达', '12:30 - 12:45', '12:45 - 13:00', '18:00 - 18:15']
+const PAY_OPTIONS = ['微信支付', '宿达余额（¥36.50）']
+const TABLEWARE_OPTIONS = ['无需餐具', '1 份餐具', '2 份餐具', '3 份餐具']
 
 Page({
   data: {
@@ -14,6 +15,7 @@ Page({
     deliveryFee: 0,
     discount: 0,
     total: 0,
+    totalPrice: 0,
     coupon: null,
     address: null,
     deliveryMode: 'now',
@@ -21,46 +23,48 @@ Page({
     remark: '',
     tableware: '1 份餐具',
     payMethod: '微信支付',
-    submitting: false
+    submitting: false,
+    loading: false,
+    sheetVisible: false,
+    sheetTitle: '',
+    sheetType: '',
+    sheetActions: [],
+    sheetCancelText: '取消'
   },
 
   onLoad() {
+    this.store = useCampusStore()
     this.setData({ statusBarHeight: getApp().globalData.statusBarHeight })
     this.loadData()
+
+    const page = this
+    this.unsubscribe = this.store.$bind(this, function (state) {
+      if (!page.data.shop) return null
+      return { loading: state.apiLoading, dataSource: state.dataSource }
+    })
+    this.store.bootstrap()
   },
 
   onShow() {
-    let address = null
-    try {
-      address = wx.getStorageSync(ADDRESS_KEY) || null
-    } catch (e) {}
-    if (address) this.setData({ address: address })
+    this.loadData()
+  },
+
+  onUnload() {
+    if (this.unsubscribe) this.unsubscribe()
   },
 
   loadData() {
-    const cart = cartUtil.getCart()
-    const summary = cartUtil.summary(cart)
+    const store = this.store
+    const cart = store.cart
+    const summary = store.summary(cart)
     const shop = summary.shopId
-      ? mock.merchants.find(function (item) { return item.id === summary.shopId }) || null
+      ? store.merchants.find(function (item) { return item.id === summary.shopId }) || null
       : null
-    let address = null
-    try {
-      address = wx.getStorageSync(ADDRESS_KEY) || null
-    } catch (e) {}
-    if (!address) address = mock.addresses.find(function (item) { return item.default }) || mock.addresses[0]
-    let coupon = null
-    try {
-      coupon = wx.getStorageSync('suda_selected_coupon_v1') || null
-    } catch (e) {}
-    if (!coupon) {
-      coupon = mock.coupons.find(function (item) {
-        return item.status === 'available' && summary.subtotal >= item.threshold && item.type === '满减'
-      }) || null
-    }
-    if (coupon && summary.subtotal < coupon.threshold) coupon = null
+    const coupon = store.activeCoupon
     const deliveryFee = shop ? shop.delivery : 0
     const discount = coupon ? coupon.amount : 0
-    const total = Math.max(0, summary.subtotal + deliveryFee - discount)
+    const total = Math.round(Math.max(0, summary.subtotal + deliveryFee - discount) * 100) / 100
+    const address = store.getAddress()
 
     this.setData({
       cartItems: cart,
@@ -69,7 +73,8 @@ Page({
       subtotal: summary.subtotal,
       deliveryFee: deliveryFee,
       discount: discount,
-      total: Math.round(total * 100) / 100,
+      total: total,
+      totalPrice: Math.round(total * 100),
       coupon: coupon,
       address: address
     })
@@ -87,99 +92,133 @@ Page({
     wx.navigateTo({ url: '/pages/addresses/addresses?select=1' })
   },
 
-  chooseDelivery() {
-    const self = this
-    wx.showActionSheet({
-      itemList: ['立即送出 · 预计 12:35 送达', '12:30 - 12:45', '12:45 - 13:00', '18:00 - 18:15'],
-      success: function (res) {
-        if (res.tapIndex === 0) {
-          self.setData({ deliveryMode: 'now', deliveryTime: '预计 12:35 送达' })
-        } else {
-          const times = ['12:30 - 12:45', '12:45 - 13:00', '18:00 - 18:15']
-          self.setData({ deliveryMode: 'reserve', deliveryTime: '预约 ' + times[res.tapIndex - 1] })
-        }
-      }
+  openSheet(type, title, actions, cancelText) {
+    this.setData({
+      sheetVisible: true,
+      sheetType: type,
+      sheetTitle: title,
+      sheetActions: actions,
+      sheetCancelText: cancelText || '取消'
     })
   },
 
-  chooseCoupon() {
-    const self = this
-    const available = mock.coupons.filter(function (item) { return item.status === 'available' && item.type === '满减' })
-    if (!available.length) {
-      wx.showToast({ title: '暂无可用优惠券', icon: 'none' })
-      return
-    }
-    const names = available.map(function (item) {
-      return (self.data.subtotal >= item.threshold ? '可用 · ' : '未达门槛 · ') + item.title
-    })
-    wx.showActionSheet({
-      itemList: names,
-      success: function (res) {
-        const coupon = available[res.tapIndex]
-        if (self.data.subtotal < coupon.threshold) {
-          wx.showToast({ title: '未达到使用门槛', icon: 'none' })
-          return
-        }
-        try { wx.setStorageSync('suda_selected_coupon_v1', coupon) } catch (e) {}
-        self.loadData()
-      }
-    })
+  closeSheet() {
+    this.setData({ sheetVisible: false })
+  },
+
+  chooseDelivery() {
+    this.openSheet('delivery', '选择送达时间', DELIVERY_OPTIONS.map(function (name, index) {
+      return { name: name, value: index }
+    }))
   },
 
   choosePay() {
-    const self = this
-    wx.showActionSheet({
-      itemList: ['微信支付', '宿达余额（¥36.50）'],
-      success: function (res) {
-        self.setData({ payMethod: res.tapIndex === 0 ? '微信支付' : '宿达余额' })
-      }
-    })
+    this.openSheet('pay', '选择支付方式', PAY_OPTIONS.map(function (name, index) {
+      return { name: name, value: index }
+    }))
   },
 
   chooseTableware() {
-    const self = this
-    wx.showActionSheet({
-      itemList: ['无需餐具', '1 份餐具', '2 份餐具', '3 份餐具'],
-      success: function (res) {
-        self.setData({ tableware: res.tapIndex === 0 ? '无需餐具' : res.tapIndex + ' 份餐具' })
-      }
-    })
+    this.openSheet('tableware', '选择餐具份数', TABLEWARE_OPTIONS.map(function (name, index) {
+      return { name: name, value: index }
+    }))
   },
 
-  onRemarkInput(e) {
-    this.setData({ remark: e.detail.value })
+  chooseCoupon() {
+    const subtotal = this.data.subtotal
+    const available = this.store.availableCoupons.filter(function (item) { return item.type === '满减' })
+    if (!available.length) {
+      ui.toast('暂无可用优惠券')
+      return
+    }
+    this.openSheet('coupon', '选择优惠券', available.map(function (item) {
+      const usable = subtotal >= item.threshold
+      return {
+        name: (usable ? '可用 · ' : '未达门槛 · ') + item.title,
+        subname: usable ? '立减 ¥' + item.amount : '还差 ¥' + (item.threshold - subtotal).toFixed(2),
+        value: item.id
+      }
+    }), '不使用优惠券')
+  },
+
+  onSheetSelect(e) {
+    const detail = e.detail || {}
+    const type = this.data.sheetType
+    this.setData({ sheetVisible: false })
+
+    if (type === 'delivery') {
+      const index = Number(detail.value)
+      if (index === 0) {
+        this.setData({ deliveryMode: 'now', deliveryTime: '预计 12:35 送达' })
+      } else {
+        const times = ['12:30 - 12:45', '12:45 - 13:00', '18:00 - 18:15']
+        this.setData({ deliveryMode: 'reserve', deliveryTime: '预约 ' + times[index - 1] })
+      }
+      return
+    }
+
+    if (type === 'pay') {
+      this.setData({ payMethod: Number(detail.value) === 0 ? '微信支付' : '宿达余额' })
+      return
+    }
+
+    if (type === 'tableware') {
+      const index = Number(detail.value)
+      this.setData({ tableware: index === 0 ? '无需餐具' : index + ' 份餐具' })
+      return
+    }
+
+    if (type === 'coupon') {
+      if (!detail.value) return
+      const coupon = this.store.coupons.find(function (item) { return item.id === detail.value })
+      if (!coupon) return
+      if (this.data.subtotal < coupon.threshold) {
+        ui.toast('未达到使用门槛')
+        return
+      }
+      this.store.selectCoupon(coupon)
+      this.loadData()
+      ui.toast('已使用 ' + coupon.title)
+    }
+  },
+
+  onRemarkChange(e) {
+    this.setData({ remark: e.detail || '' })
+  },
+
+  clearCoupon() {
+    this.store.selectCoupon(null)
+    this.loadData()
   },
 
   submitOrder() {
     if (this.data.submitting) return
     if (!this.data.count) {
-      wx.showToast({ title: '购物车是空的', icon: 'none' })
+      ui.toast('购物车是空的')
       return
     }
     if (!this.data.address) {
-      wx.showToast({ title: '请选择收货地址', icon: 'none' })
+      ui.toast('请选择收货地址')
       return
     }
 
-    this.setData({ submitting: true })
-    const now = new Date()
-    const pad = function (value) { return value < 10 ? '0' + value : '' + value }
-    const id = 'SD' + now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate()) + pad(now.getHours()) + pad(now.getMinutes()) + Math.floor(Math.random() * 90 + 10)
+    const page = this
+    const data = this.data
     const order = {
-      id: id,
-      shopId: this.data.shop.id,
-      shopName: this.data.shop.name,
-      shopCover: this.data.shop.cover,
+      shopId: data.shop.id,
+      shopName: data.shop.name,
+      shopCover: data.shop.cover,
       status: 'preparing',
       statusText: '商家制作中',
-      statusNote: this.data.deliveryTime + ' · ' + this.data.address.detail,
-      total: this.data.total,
-      itemCount: this.data.count,
+      statusNote: data.deliveryTime + ' · ' + data.address.detail,
+      total: data.total,
+      itemCount: data.count,
       createdAt: '刚刚',
-      address: this.data.address.detail,
-      remark: this.data.remark,
-      payMethod: this.data.payMethod,
-      items: this.data.cartItems.map(function (item) {
+      address: data.address.detail,
+      remark: data.remark,
+      payMethod: data.payMethod,
+      tableware: data.tableware,
+      items: data.cartItems.map(function (item) {
         return {
           name: item.name,
           spec: item.spec,
@@ -187,30 +226,27 @@ Page({
           price: item.price,
           image: item.image
         }
-      }),
-      rider: { name: '周师傅', phone: '138****6621', avatar: '周' },
-      timeline: [
-        { text: '商家已接单', time: '刚刚', done: true },
-        { text: '订单已支付', time: '刚刚', done: true }
-      ]
+      })
     }
 
-    let orders = []
-    try {
-      orders = wx.getStorageSync(ORDER_KEY) || []
-    } catch (e) {}
-    orders.unshift(order)
-    try {
-      wx.setStorageSync(ORDER_KEY, orders)
-      cartUtil.clearCart()
-      wx.removeStorageSync('suda_selected_coupon_v1')
-    } catch (e) {}
+    this.setData({ submitting: true })
+    ui.loading({ message: '正在提交订单…' })
 
-    wx.showLoading({ title: '正在下单', mask: true })
-    const self = this
-    setTimeout(function () {
-      wx.hideLoading()
-      wx.redirectTo({ url: '/pages/order-detail/order-detail?id=' + id + '&success=1' })
-    }, 900)
+    this.store.createOrder(order).then(function (result) {
+      ui.hideLoading()
+      page.setData({ submitting: false })
+      if (result && result.offline) {
+        ui.toast('后端未连接，已生成本地订单')
+      } else {
+        ui.toast('下单成功')
+      }
+      setTimeout(function () {
+        wx.redirectTo({ url: '/pages/order-detail/order-detail?id=' + result.id + '&success=1' })
+      }, 450)
+    }).catch(function (error) {
+      ui.hideLoading()
+      page.setData({ submitting: false })
+      ui.alert({ title: '下单失败', message: (error && error.friendlyMessage) || '请稍后再试' })
+    })
   }
 })

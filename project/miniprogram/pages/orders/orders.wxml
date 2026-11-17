@@ -86,7 +86,7 @@
 
   <view class="list-head" wx:if="{{displayOrders.length}}">
     <text class="list-title">{{activeTab === 'review' ? '等你评价' : '历史订单'}}</text>
-    <text class="list-sub">{{displayOrders.length}} RECORDS</text>
+    <text class="list-sub">{{displayOrders.length}} RECORDS · {{dataSource === 'remote' ? 'API' : 'LOCAL'}}</text>
   </view>
 
   <view class="order-list">
@@ -164,8 +164,15 @@
     <view class="footer-line"></view>
   </view>
 
-  <view class="sheet-mask" wx:if="{{reviewVisible}}" bindtap="closeReview">
-    <view class="review-sheet" catchtap="noop">
+  <van-popup
+    z-index="{{1000}}"
+    show="{{reviewVisible}}"
+    position="bottom"
+    round
+    custom-style="background: transparent;"
+    bind:close="closeReview"
+  >
+    <view class="review-sheet">
       <view class="sheet-handle"></view>
       <view class="sheet-head">
         <view>
@@ -183,13 +190,14 @@
       </view>
 
       <view class="stars">
-        <view
-          class="star-item {{index < reviewStars ? 'filled' : ''}}"
-          wx:for="{{reviewStarList}}"
-          wx:key="*this"
-          data-value="{{item}}"
-          bindtap="setStar"
-        >★</view>
+        <van-rate
+          value="{{reviewStars}}"
+          size="26"
+          gutter="10"
+          color="#b9e83e"
+          void-color="#dedbd2"
+          bind:change="onRateChange"
+        />
       </view>
 
       <view class="review-tags">
@@ -202,19 +210,25 @@
         >{{item.name}}</view>
       </view>
 
-      <textarea
-        class="review-input"
+      <van-field
+        type="textarea"
+        value="{{reviewText}}"
+        custom-class="review-van-field"
+        border="{{false}}"
+        maxlength="120"
+        autosize
         placeholder="说说这一餐的闪光点吧…"
         placeholder-class="review-placeholder"
-        maxlength="120"
-        value="{{reviewText}}"
-        bindinput="onReviewInput"
-      ></textarea>
+        bind:change="onReviewChange"
+      />
 
       <view class="review-submit" bindtap="submitReview">
         <text>提交评价</text>
         <text class="submit-reward">+10 宿达积分</text>
       </view>
     </view>
-  </view>
+  </van-popup>
+
+  <van-dialog id="van-dialog" z-index="{{1000}}" />
+  <van-toast id="van-toast" />
 </view>

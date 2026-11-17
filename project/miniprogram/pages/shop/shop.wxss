@@ -577,6 +577,16 @@ button.nav-icon {
   height: 44rpx;
 }
 
+.cart-van-stepper {
+  --stepper-background-color: #f2f0ea;
+  --stepper-button-icon-color: #18211a;
+  --stepper-input-text-color: #18211a;
+  --stepper-input-width: 30px;
+  --stepper-input-height: 24px;
+  --stepper-border-radius: 12px;
+  flex-shrink: 0;
+}
+
 .menu-note {
   display: flex;
   align-items: center;
@@ -881,4 +891,13 @@ button.nav-icon {
 .panel-checkout image {
   width: 29rpx;
   height: 29rpx;
+}
+
+.shop-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7d857d;
+  font-size: 22rpx;
 }

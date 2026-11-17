@@ -15,6 +15,16 @@ page {
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
   font-size: 28rpx;
   -webkit-font-smoothing: antialiased;
+
+  /* Vant Weapp 主题变量：保持校园宿达的奶油 + 荧光绿视觉 */
+  --van-primary-color: #18211a;
+  --submit-bar-price-color: #18211a;
+  --submit-bar-tip-background-color: #eef7d6;
+  --submit-bar-tip-color: #5b741c;
+  --submit-bar-button-height: 44px;
+  --toast-background-color: rgba(24, 33, 26, 0.92);
+  --dialog-confirm-button-color: #18211a;
+  --tag-primary-color: #d7ff5e;
 }
 
 view, text, image, scroll-view, swiper, input, textarea, button {

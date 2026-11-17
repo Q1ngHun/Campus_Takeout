@@ -1,4 +1,4 @@
-<view class="tabbar-wrap">
+<view class="tabbar-wrap" wx:if="{{!hidden}}">
   <view class="tabbar">
     <view
       class="tab-item {{selected === index ? 'active' : ''}}"

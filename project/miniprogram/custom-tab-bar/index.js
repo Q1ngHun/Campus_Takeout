@@ -1,6 +1,7 @@
 Component({
   data: {
     selected: 0,
+    hidden: false,
     list: [
       { pagePath: '/pages/home/home', text: '首页', icon: '/assets/icons/home.svg' },
       { pagePath: '/pages/orders/orders', text: '订单', icon: '/assets/icons/order.svg' },

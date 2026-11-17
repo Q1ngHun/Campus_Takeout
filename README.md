@@ -1,92 +1,61 @@
-# 校园宿达 · SUDA CAMPUS
+# 校园宿达 · Campus Suda
 
-> 把好吃的，送到宿舍楼下。
+校内外卖演示项目，包含 **微信小程序**、**H5 演示端** 与 **Spring Boot 后端**。
 
-一套面向校园场景的外卖用户端作品，参考美团外卖的信息架构，重新设计了「校园宿达」品牌视觉与交互。包含 **微信小程序前台**、**Vue 3 响应式交互预览** 与 **Spring Boot 本地数据 API**。
+本次更新的两个重点：
 
-![首页预览](screenshots/desktop-home.png)
-
-## 设计概念
-
-- **品牌色**：荧光青柠 `#D7FF5E` + 深松林绿 `#14251B` + 燕麦米白 `#F4F2EC`
-- **关键词**：极简、留白、高对比、校园感、编辑部式排版
-- **视觉语言**：大字号标题、悬浮胶囊导航、圆角卡片、手写感贴纸、动态配送轨迹
-- **响应式**：桌面端以「品牌展示 + 手机真机预览」呈现；移动端自动切换为全屏小程序体验
-
-## 功能清单
-
-### 三大主页面
-- **首页**：问候语、搜索、品牌 Hero、分类筛选、开学季优惠、今日热卖横向卡片、附近商家 Feed、快捷加购、悬浮购物车。
-- **订单**：订单状态筛选、进行中订单配送 Card、预计送达时间、配送轨迹、骑手信息、历史订单、再来一单、评价弹层。
-- **用户中心**：会员身份、余额 / 优惠券 / 积分、SUDA PRO 省额进度、地址 / 优惠券 / 收藏 / 客服入口、本月消费图表、偏好与设置。
-
-### 其余功能页面
-- 搜索：历史、热搜、实时结果、相关单品、随机推荐
-- 店铺详情：菜单分类、菜品加减、店铺公告、优惠券、购物车弹层
-- 购物车：数量调整、优惠券、配送方式、费用明细
-- 确认订单：地址、送达时间、备注、餐具、支付方式、下单
-- 订单详情：进度条、配送动态、骑手、商品、账单、订单信息
-- 地址管理：新增 / 编辑 / 删除 / 默认地址
-- 优惠券：可用 / 已使用 / 已过期
-- 我的收藏、设置
-
-全部业务数据保存在本地（小程序 Storage / 浏览器 localStorage），无需联网即可完整体验。
+1. **Vant Weapp 组件化**：安装并构建 `@vant/weapp`，并在各页面用 Vant 组件替换原生弹窗、Toast、输入框、步进器、标签、开关、步骤条、提交栏等。
+2. **前后端联调（axios + Pinia）**：
+   - 小程序端：`axios`（`axios-miniprogram-adapter` 适配 `wx.request`）+ Pinia 同构 store，全部页面数据来自 Spring Boot API，失败自动回退本地示例数据。
+   - H5 端：官方 `pinia` + `axios`，与同一套 Spring Boot 接口联调。
 
 ## 目录结构
 
 ```
 Ai_WeiXin/
-├─ miniprogram/                 # 微信原生小程序（主交付）
-│  ├─ pages/                    # 首页、订单、我的、店铺、购物车、结算等 12 页
-│  ├─ components/               # 商家卡片、空状态
-│  ├─ custom-tab-bar/           # 自定义悬浮 TabBar
-│  ├─ data/mock.js              # 本地数据
-│  ├─ utils/                    # 购物车、收藏
-│  └─ assets/                   # 本地图片与图标
-├─ web/                         # Vue 3 + Vite 响应式交互预览
-│  ├─ src/views/                # 对应小程序的全部页面
-│  ├─ src/store.js              # 本地状态 & 持久化
-│  └─ public/                   # 图片与 SVG 图标
-├─ server/                      # Spring Boot API
-│  ├─ src/main/java/            # Controller / Service / Config
-│  └─ src/main/resources/mock-data.json
-├─ screenshots/                 # 桌面端与移动端效果图
-├─ tools/                       # 便携 Node、Maven 与启动脚本
-├─ start-backend.bat
-├─ start-web.bat
-└─ run-demo.bat
+├─ miniprogram/                微信小程序（Vant Weapp + axios + Pinia 同构 store）
+│  ├─ api/                     axios 实例与接口封装
+│  ├─ config/                  接口地址、远程开关等配置（含本地持久化）
+│  ├─ store/                   Pinia 同构 store（defineStore / state / getters / actions）
+│  ├─ vendor/axios.min.js      axios 浏览器 UMD 构建（小程序端使用）
+│  ├─ utils/                   ui（Vant Toast/Dialog）、购物车、收藏、storage、tabBar 显隐
+│  ├─ pages/                   12 个业务页面
+│  └─ miniprogram_npm/         微信开发者工具「构建 npm」产物
+├─ server/                     Spring Boot 3.5 REST API（默认 8080）
+├─ web/                        Vue 3 + Pinia + axios 的 H5 演示端（默认 5173）
+├─ tools/                      构建与校验脚本
+├─ screenshots/                各页面运行截图（mp-*.png / web-api-*.png）
+├─ start-backend.bat           启动后端
+├─ start-web.bat               启动 H5 演示端
+└─ run-demo.bat                一键启动后端 + H5
 ```
 
 ## 快速开始
 
-### 方式一：一键演示（Web 预览）
+### 1. 启动后端
 
-双击运行：
+双击 `start-backend.bat`，或手动执行：
 
-```bat
-run-demo.bat
+```bash
+cd server
+mvn spring-boot:run
 ```
 
-脚本会启动 Spring Boot API（8080）与 Vue 开发服务器（5173），并自动打开浏览器。手机预览会自动适配为全屏布局。
+健康检查：<http://localhost:8080/api/health>
 
-### 方式二：微信开发者工具
+### 2. 运行小程序
 
-1. 打开微信开发者工具，选择「导入项目」。
-2. 目录选择 `D:\Ai_WeiXin\miniprogram`。
-3. AppID 可使用测试号（项目内为 `touristappid`）。
-4. 编译即可体验，所有数据均为本地数据。
+1. 用微信开发者工具打开 `miniprogram/` 目录。
+2. 首次打开后执行 **工具 → 构建 npm**（`miniprogram_npm/` 已随仓库生成，可直接运行）。
+3. 在 **详情 → 本地设置** 勾选「不校验合法域名、web-view（业务域名）、TLS 版本以及 HTTPS 证书」。
+4. 编译运行。首页顶部会显示通知条，列表底部会显示 `API 已连接 · Spring Boot API`。
 
-> 小程序使用自定义导航栏与自定义 TabBar，建议使用较新的基础库（项目配置为 3.5.7）。
+> 后端未启动时会自动使用 `miniprogram/data/mock.js` 的本地示例数据，页面功能不受影响。
+> 在 **我的 → 设置 → 后端联调** 可以开关远程数据、修改接口地址、测试连接与查看最近同步时间。
 
-### 方式三：分别启动
+### 3. 运行 H5 演示端
 
-**Vue 3 前端**
-
-```bat
-tools\npm-run.bat run dev
-```
-
-或标准环境：
+双击 `start-web.bat`，或：
 
 ```bash
 cd web
@@ -94,93 +63,126 @@ npm install
 npm run dev
 ```
 
-生产构建：
+打开 <http://localhost:5173>，页面顶部会显示 `AXIOS · PINIA · API` 状态。
 
-```bat
-tools\npm-run.bat run build
+## 前后端联调设计
+
+### axios（小程序端）
+
+`miniprogram/api/http.js`：
+
+```js
+const axios = require('../vendor/axios.min')
+const mpAdapter = require('axios-miniprogram-adapter')
+
+const http = axios.create({
+  baseURL: 'http://localhost:8080/api',
+  timeout: 8000,
+  adapter: mpAdapter
+})
+
+http.interceptors.request.use((config) => {
+  config.headers['X-Client'] = 'weapp'
+  return config
+})
 ```
 
-**Spring Boot 后端**
+- 小程序没有 `XMLHttpRequest`，通过 `axios-miniprogram-adapter` 把请求转交给 `wx.request`，同时保留 axios 的拦截器、超时、错误处理能力。
+- axios 的 npm 入口是 Node 版本（依赖 `http` / `util` 等内置模块），无法被小程序编译；因此使用官方 `dist/axios.min.js`（UMD 构建），已放入 `miniprogram/vendor/`，可用 `npm run sync:axios` 重新同步。
+- 所有请求统一在 `miniprogram/api/campus.js` 封装，页面不直接拼 URL。
 
-```bat
-tools\mvn-run.bat spring-boot:run
+### Pinia（小程序端）
+
+官方 Pinia 依赖 Vue 3 响应式运行时，无法直接跑在微信小程序中。项目在 `miniprogram/store/pinia.js` 实现了 **与 Pinia API 对齐的同构 store**：
+
+```js
+const useCampusStore = defineStore('campus', {
+  state: () => ({ cart: [], merchants: [], apiOnline: false }),
+  getters: { cartCount: (state) => state.cart.length },
+  actions: { addToCart(dish, shop) { /* ... */ } }
+})
 ```
 
-或直接运行已构建的 JAR：
+支持 `state / getters / actions / $patch / $reset / $subscribe / $bind`，页面写法与 Pinia 完全一致：
 
-```bat
-java -jar server\target\campus-suda-1.0.0.jar
+```js
+this.store = useCampusStore()
+this.unsubscribe = this.store.$bind(this, (state, store) => ({
+  cartCount: store.cartCount,
+  apiOnline: state.apiOnline
+}))
+this.store.bootstrap()   // axios 拉取 /home /orders /coupons /addresses ...
 ```
 
-健康检查：`GET http://localhost:8080/api/health`
+H5 端（`web/src/stores/campus.js`）使用官方 `pinia`，接口与数据字段保持一致，可以直接对照阅读。
 
-## 后端 API
+### 数据流
+
+```
+Page  ──▶  store action  ──▶  api/campus.js  ──▶  axios  ──▶  wx.request  ──▶  Spring Boot
+  ▲            │                                                                    │
+  └── setData ──┴────────────  store.$subscribe / $bind  ◀──────── JSON ────────────┘
+                              （失败时自动回退 data/mock.js）
+```
+
+## Vant Weapp 使用情况
+
+| 页面 | 使用的 Vant 组件 | 替换的原生/自研实现 |
+| --- | --- | --- |
+| 首页 | `van-notice-bar`、`van-action-sheet`、`van-dialog`、`van-toast` | `wx.showActionSheet`、`wx.showToast`、自绘通知条 |
+| 搜索 | `van-search`、`van-loading`、`van-dialog`、`van-toast` | 原生 `input`、`wx.showModal` |
+| 店铺 | `van-popup`、`van-stepper`、`van-toast`、`van-dialog`、`van-loading` | 原生步进器、`wx.showModal` |
+| 购物车 | `van-stepper`、`van-submit-bar`、`van-action-sheet`、`van-dialog`、`van-toast` | 自绘底部结算栏、`wx.showActionSheet`、`wx.showModal` |
+| 结算 | `van-field`、`van-submit-bar`、`van-action-sheet`、`van-dialog`、`van-toast` | 原生 `input`、自绘提交栏、4 处 `wx.showActionSheet` |
+| 订单 | `van-popup`、`van-rate`、`van-field`、`van-dialog`、`van-toast` | 原生 `textarea`、`wx.showModal`、`wx.showToast` |
+| 订单详情 | `van-steps`、`van-dialog`、`van-toast` | 自绘物流时间轴、`wx.showModal` |
+| 优惠券 | `van-tag`、`van-dialog`、`van-toast` | 自绘券类型标签、`wx.showModal` |
+| 地址 | `van-popup`、`van-field`、`van-tag`、`van-dialog`、`van-toast` | 自绘默认标签、`wx.showModal` |
+| 我的 | `van-tag`、`van-action-sheet`、`van-dialog`、`van-toast` | PRO 徽标、`wx.showActionSheet`、`wx.showModal` |
+| 设置 | `van-switch`、`van-tag`、`van-button`、`van-popup`、`van-field`、`van-dialog`、`van-toast` | 原生开关、`wx.showModal` |
+
+## 后端接口
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
-| GET | `/api/home` | 首页聚合（分类、商家、优惠券、进行中订单） |
+| GET | `/api/health` | 健康检查（设置页「测试连接」使用） |
+| GET | `/api/home` | 首页聚合数据（分类、商家、用户、可用券、进行中订单） |
 | GET | `/api/merchants` | 商家列表 |
-| GET | `/api/merchants/{id}` | 商家详情 |
-| GET | `/api/search?q=拌饭` | 搜索商家与菜品 |
-| GET | `/api/orders` | 订单列表 |
-| POST | `/api/orders` | 创建订单 |
+| GET | `/api/merchants/{id}` | 商家详情（店铺页） |
+| GET | `/api/search?q=` | 搜索店铺与单品 |
+| GET | `/api/orders` | 订单列表（订单页） |
 | GET | `/api/orders/{id}` | 订单详情 |
-| GET | `/api/coupons` | 优惠券 |
+| POST | `/api/orders` | 创建订单（结算页提交） |
+| GET | `/api/coupons` | 优惠券列表 |
 | GET | `/api/addresses` | 地址列表 |
 | POST | `/api/addresses` | 新增地址 |
-| PUT | `/api/addresses/{id}/default` | 设置为默认地址 |
+| PUT | `/api/addresses/{id}/default` | 设为默认地址 |
 | GET | `/api/user` | 用户信息 |
+| GET | `/api/notifications` | 消息通知 |
+| GET | `/api/hot-searches` | 校园热搜 |
 
-小程序与 Vue 预览默认使用本地数据，不依赖后端即可完整运行；后端使用 `server/src/main/resources/mock-data.json` 提供同一套校园业务数据，便于后续接入真实前端。
+CORS 已在 `server/.../config/WebConfig.java` 放开 `/api/**`。
 
-## 数据与状态
+## 常用脚本
 
-- 小程序本地数据：`miniprogram/data/mock.js`
-- 小程序购物车：`suda_cart_v1`
-- 小程序订单：`suda_orders_v1`
-- Web 本地数据：`web/src/data.json`
-- Web 状态：`web/src/store.js`，使用 localStorage 持久化
-- 后端数据：`server/src/main/resources/mock-data.json`
+```bash
+# 同步 axios 浏览器构建到 miniprogram/vendor（npm install 后自动执行）
+cd miniprogram && npm run sync:axios
 
-清除浏览器 localStorage 即可重置演示数据。
+# 校验小程序 JS / JSON / WXML / WXSS / 静态资源引用
+node tools/check-js.js
+python tools/check-wxml.py
 
-## 校验情况
+# H5 构建
+cd web && npm run build
+```
 
-- Vue 3 生产构建通过（Vite 6）
-- Spring Boot 打包通过（Maven 3.9.9 / Java 17 target）
-- 小程序 19 个 JS 文件语法检查通过
-- 18 个 JSON 配置解析通过
-- WXML 标签闭合、WXSS 语法、静态资源引用检查通过
-- Web 端完整链路已自动化走通：店铺 → 加购 → 购物车 → 结算 → 下单 → 订单详情
-- 已通过微信开发者工具（touristappid）编译加载，并截图验证首页、搜索、店铺、订单、我的、优惠券、地址、订单详情
-- 无浏览器控制台运行时错误
+## 截图
 
-## 小程序真机编译预览
+`screenshots/` 下的 `mp-*.png` 为本次更新后的真机模拟器截图，包括首页、搜索、订单、购物车、结算、优惠券、地址、收藏、设置、订单详情等页面。
 
-| 首页 | 店铺 | 订单 |
-| --- | --- | --- |
-| ![](screenshots/mini-home.png) | ![](screenshots/mini-shop.png) | ![](screenshots/mini-orders.png) |
+## 备注
 
-| 我的 | 优惠券 | 地址 | 订单详情 |
-| --- | --- | --- | --- |
-| ![](screenshots/mini-profile.png) | ![](screenshots/mini-coupons.png) | ![](screenshots/mini-addresses.png) | ![](screenshots/mini-order-detail.png) |
-
-## Vue 3 响应式预览
-
-| 首页 | 订单 | 用户中心 |
-| --- | --- | --- |
-| ![](screenshots/mobile-home.png) | ![](screenshots/mobile-orders.png) | ![](screenshots/mobile-profile.png) |
-
-| 店铺详情 | 购物车 | 确认订单 | 订单详情 |
-| --- | --- | --- | --- |
-| ![](screenshots/mobile-shop.png) | ![](screenshots/mobile-cart.png) | ![](screenshots/mobile-checkout.png) | ![](screenshots/mobile-order-detail.png) |
-
-桌面端展示：
-
-![订单页](screenshots/desktop-orders.png)
-
-## 说明
-
-- 示例菜品图片来自 Unsplash，仅用于作品演示。
-- 所有商家、用户、订单、地址、优惠均为虚构数据。
-- 小程序端与 Web 端共享同一套品牌视觉与本地业务数据，二者可独立运行。
+- 小程序端「地址编辑/删除」「收藏」「评价」属于本地增强能力，后端仅提供新增地址、设置默认地址接口，阅读时请注意区分。
+- 后端数据存放在内存中，重启服务后恢复 `server/src/main/resources/mock-data.json` 的初始数据。
+- 本地演示接口为 `http://localhost:8080/api`，真机预览请改为电脑局域网 IP，并确保手机与电脑同一网络。

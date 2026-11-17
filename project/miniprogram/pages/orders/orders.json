@@ -1,6 +1,11 @@
 {
   "usingComponents": {
-    "empty-state": "/components/empty-state/index"
+    "empty-state": "/components/empty-state/index",
+    "van-popup": "@vant/weapp/popup/index",
+    "van-rate": "@vant/weapp/rate/index",
+    "van-field": "@vant/weapp/field/index",
+    "van-dialog": "@vant/weapp/dialog/index",
+    "van-toast": "@vant/weapp/toast/index"
   },
   "navigationStyle": "custom"
 }

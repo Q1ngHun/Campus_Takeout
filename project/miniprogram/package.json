@@ -1,0 +1,17 @@
+{
+  "name": "campus-suda-miniprogram",
+  "version": "1.0.0",
+  "private": true,
+  "description": "校园宿达微信小程序（Vant Weapp + axios + Pinia 同构 store）",
+  "scripts": {
+    "sync:axios": "node ../tools/sync-axios.js",
+    "postinstall": "node ../tools/sync-axios.js"
+  },
+  "dependencies": {
+    "@vant/weapp": "^1.11.7",
+    "axios-miniprogram-adapter": "^0.3.5"
+  },
+  "devDependencies": {
+    "axios": "^0.27.2"
+  }
+}

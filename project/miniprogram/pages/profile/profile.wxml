@@ -31,7 +31,7 @@
       <view class="profile-info">
         <view class="name-row">
           <text class="profile-name">{{user.name}}</text>
-          <view class="pro-pill">PRO</view>
+          <van-tag round custom-class="profile-pro-tag" color="#d7ff5e" text-color="#18211a">PRO</van-tag>
         </view>
         <text class="profile-school">{{user.school}}</text>
         <view class="profile-meta">
@@ -176,4 +176,17 @@
     <text>SUDA CAMPUS · 校园宿达</text>
     <text>VERSION 1.0.0</text>
   </view>
+
+  <van-action-sheet
+    z-index="{{1000}}"
+    show="{{tasteVisible}}"
+    actions="{{tasteActions}}"
+    title="口味偏好"
+    cancel-text="取消"
+    bind:select="onSelectTaste"
+    bind:close="closeTaste"
+    bind:cancel="closeTaste"
+  />
+  <van-dialog id="van-dialog" z-index="{{1000}}" />
+  <van-toast id="van-toast" />
 </view>

@@ -185,6 +185,16 @@
   align-items: center;
 }
 
+.profile-pro-tag {
+  height: 32rpx !important;
+  padding: 0 12rpx !important;
+  border-radius: 16rpx !important;
+  font-size: 15rpx !important;
+  font-weight: 900 !important;
+  letter-spacing: 1rpx;
+  line-height: 32rpx !important;
+}
+
 .profile-school {
   display: block;
   margin-top: 9rpx;

@@ -1,4 +1,5 @@
 <view class="shop-page">
+  <block wx:if="{{shop}}">
   <view class="shop-cover-wrap">
     <image class="shop-cover" src="{{shop.cover}}" mode="aspectFill" />
     <view class="cover-mask"></view>
@@ -174,8 +175,15 @@
     </view>
   </view>
 
-  <view class="cart-mask" wx:if="{{cartPanelVisible}}" bindtap="closeCartPanel">
-    <view class="cart-panel" catchtap="noop">
+  <van-popup
+    z-index="{{1000}}"
+    show="{{cartPanelVisible}}"
+    position="bottom"
+    round
+    custom-style="background: transparent;"
+    bind:close="closeCartPanel"
+  >
+    <view class="cart-panel">
       <view class="panel-handle"></view>
       <view class="panel-head">
         <view>
@@ -196,15 +204,14 @@
             <text class="cart-item-spec">{{item.spec}}</text>
             <text class="cart-item-price">¥{{item.price}}</text>
           </view>
-          <view class="stepper small">
-            <view class="step-btn minus" data-id="{{item.dishId}}" bindtap="minusCartItem">
-              <image src="/assets/icons/minus.svg" />
-            </view>
-            <text class="step-value">{{item.qty}}</text>
-            <view class="step-btn plus" data-id="{{item.dishId}}" bindtap="plusCartItem">
-              <image src="/assets/icons/plus.svg" />
-            </view>
-          </view>
+          <van-stepper
+            value="{{item.qty}}"
+            min="0"
+            button-size="24"
+            custom-class="cart-van-stepper"
+            data-id="{{item.dishId}}"
+            bind:change="onCartStepperChange"
+          />
         </view>
       </scroll-view>
 
@@ -220,5 +227,13 @@
         </view>
       </view>
     </view>
+  </van-popup>
+
+  <van-toast id="van-toast" />
+  <van-dialog id="van-dialog" z-index="{{1000}}" />
+  </block>
+
+  <view class="shop-loading" wx:else>
+    <van-loading size="24px" color="#18211a" vertical>正在向后端请求店铺…</van-loading>
   </view>
 </view>

@@ -83,18 +83,14 @@
         <text class="card-title">配送动态</text>
         <text class="card-sub">LIVE TRACKING</text>
       </view>
-      <view class="timeline-list">
-        <view class="timeline-item" wx:for="{{order.timeline}}" wx:key="text">
-          <view class="timeline-rail">
-            <view class="timeline-dot {{index === 0 ? 'active' : ''}} {{item.done ? 'done' : ''}}"></view>
-            <view class="timeline-line" wx:if="{{index < order.timeline.length - 1}}"></view>
-          </view>
-          <view class="timeline-copy">
-            <text class="timeline-text {{index === 0 ? 'active' : ''}}">{{item.text}}</text>
-            <text class="timeline-time">{{item.time || '待更新'}}</text>
-          </view>
-        </view>
-      </view>
+      <van-steps
+        direction="vertical"
+        steps="{{timelineSteps}}"
+        active="{{0}}"
+        active-color="#18211a"
+        inactive-color="#c9cdc4"
+        custom-class="detail-van-steps"
+      />
     </view>
 
     <view class="address-card">
@@ -153,7 +149,7 @@
         <text class="info-label">订单编号</text>
         <view class="info-value copy-value">
           <text>{{order.id}}</text>
-          <view class="copy-btn">复制</view>
+          <view class="copy-btn" bindtap="copyOrderId">复制</view>
         </view>
       </view>
       <view class="info-row">
@@ -209,4 +205,7 @@
       </view>
     </view>
   </block>
+
+  <van-dialog id="van-dialog" z-index="{{1000}}" />
+  <van-toast id="van-toast" />
 </view>

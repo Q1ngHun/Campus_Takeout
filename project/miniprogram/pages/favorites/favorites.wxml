@@ -49,7 +49,10 @@
 
   <view class="favorites-foot" wx:if="{{count}}">
     <view class="foot-line"></view>
-    <text>喜欢的，都留在这里</text>
+    <text>{{dataSource === 'remote' ? 'API 同步的收藏' : '喜欢的，都留在这里'}}</text>
     <view class="foot-line"></view>
   </view>
+
+  <van-dialog id="van-dialog" z-index="{{1000}}" />
+  <van-toast id="van-toast" />
 </view>

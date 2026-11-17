@@ -1,5 +1,32 @@
-const mock = require('../../data/mock')
-const cartUtil = require('../../utils/cart')
+const { useCampusStore } = require('../../store/campus')
+const ui = require('../../utils/ui')
+
+function computeView(store) {
+  const cart = store.cart
+  const summary = store.summary(cart)
+  const shop = summary.shopId
+    ? store.merchants.find(function (item) { return item.id === summary.shopId }) || null
+    : null
+  const coupon = store.activeCoupon
+  const deliveryFee = cart.length ? (shop ? shop.delivery : 1.5) : 0
+  const discount = coupon ? coupon.amount : 0
+  const total = Math.round(Math.max(0, summary.subtotal + deliveryFee - discount) * 100) / 100
+
+  return {
+    cartItems: cart,
+    shop: shop,
+    count: summary.count,
+    subtotal: summary.subtotal,
+    deliveryFee: deliveryFee,
+    discount: discount,
+    total: total,
+    totalPrice: Math.round(total * 100),
+    coupon: coupon,
+    couponCount: store.availableCoupons.length,
+    couponUsable: summary.subtotal >= 20,
+    dataSource: store.dataSource
+  }
+}
 
 Page({
   data: {
@@ -11,57 +38,37 @@ Page({
     deliveryFee: 1.5,
     discount: 0,
     total: 0,
+    totalPrice: 0,
     coupon: null,
     couponCount: 0,
-    couponUsable: false
+    couponUsable: false,
+    couponVisible: false,
+    couponActions: [],
+    dataSource: 'mock'
   },
 
   onLoad() {
-    const app = getApp()
-    this.setData({ statusBarHeight: app.globalData.statusBarHeight })
+    this.store = useCampusStore()
+    this.setData({ statusBarHeight: getApp().globalData.statusBarHeight })
     this.loadCart()
+
+    const page = this
+    this.unsubscribe = this.store.$bind(this, function () {
+      return computeView(page.store)
+    })
+    this.store.bootstrap()
   },
 
   onShow() {
     this.loadCart()
   },
 
+  onUnload() {
+    if (this.unsubscribe) this.unsubscribe()
+  },
+
   loadCart() {
-    const cart = cartUtil.getCart()
-    const summary = cartUtil.summary(cart)
-    const shop = summary.shopId
-      ? mock.merchants.find(function (item) { return item.id === summary.shopId }) || null
-      : null
-    let coupon = null
-
-    try {
-      coupon = wx.getStorageSync('suda_selected_coupon_v1') || null
-    } catch (e) {}
-
-    if (!coupon) {
-      coupon = mock.coupons.find(function (item) {
-        return item.status === 'available' && summary.subtotal >= item.threshold && item.type === '满减'
-      }) || null
-    }
-    if (coupon && summary.subtotal < coupon.threshold) coupon = null
-
-    const deliveryFee = cart.length ? (shop ? shop.delivery : 1.5) : 0
-    const discount = coupon ? coupon.amount : 0
-    const total = Math.max(0, summary.subtotal + deliveryFee - discount)
-    const couponCount = mock.coupons.filter(function (item) { return item.status === 'available' }).length
-
-    this.setData({
-      cartItems: cart,
-      shop: shop,
-      count: summary.count,
-      subtotal: summary.subtotal,
-      deliveryFee: deliveryFee,
-      discount: discount,
-      total: Math.round(total * 100) / 100,
-      coupon: coupon,
-      couponCount: couponCount,
-      couponUsable: summary.subtotal >= 20
-    })
+    this.setData(computeView(this.store))
   },
 
   goBack() {
@@ -77,60 +84,73 @@ Page({
     wx.navigateTo({ url: '/pages/shop/shop?id=' + this.data.shop.id })
   },
 
-  plus(e) {
-    cartUtil.changeQty(e.currentTarget.dataset.id, 1)
-    this.loadCart()
-  },
-
-  minus(e) {
-    cartUtil.changeQty(e.currentTarget.dataset.id, -1)
+  onQtyChange(e) {
+    const id = e.currentTarget.dataset.id
+    const value = Number(e.detail)
+    const item = this.data.cartItems.find(function (cartItem) { return cartItem.dishId === id })
+    if (!item) return
+    this.store.changeQty(id, value - item.qty)
     this.loadCart()
   },
 
   remove(e) {
     const id = e.currentTarget.dataset.id
-    cartUtil.removeItem(id)
+    this.store.removeItem(id)
     this.loadCart()
+    ui.toast('已移除')
   },
 
   chooseCoupon() {
-    const self = this
     const subtotal = this.data.subtotal
-    const available = mock.coupons.filter(function (item) {
-      return item.status === 'available' && item.type === '满减'
+    const available = this.store.availableCoupons.filter(function (item) {
+      return item.type === '满减'
     })
-    const names = available.map(function (item) {
-      const usable = subtotal >= item.threshold
-      return (usable ? '可用 · ' : '未达门槛 · ') + item.title
-    })
-
-    wx.showActionSheet({
-      itemList: names,
-      success: function (res) {
-        const coupon = available[res.tapIndex]
-        if (subtotal < coupon.threshold) {
-          wx.showToast({ title: '还差 ¥' + (coupon.threshold - subtotal).toFixed(2) + ' 可用', icon: 'none' })
-          return
+    if (!available.length) {
+      ui.toast('暂无可用优惠券')
+      return
+    }
+    this.setData({
+      couponVisible: true,
+      couponActions: available.map(function (item) {
+        const usable = subtotal >= item.threshold
+        return {
+          name: (usable ? '可用 · ' : '未达门槛 · ') + item.title,
+          subname: usable ? '立减 ¥' + item.amount : '还差 ¥' + (item.threshold - subtotal).toFixed(2),
+          value: item.id,
+          disabled: false
         }
-        try { wx.setStorageSync('suda_selected_coupon_v1', coupon) } catch (e) {}
-        self.loadCart()
-        wx.showToast({ title: '已使用 ' + coupon.title, icon: 'none' })
-      }
+      })
     })
   },
 
+  onSelectCoupon(e) {
+    const id = e.detail && e.detail.value
+    const coupon = this.store.coupons.find(function (item) { return item.id === id })
+    if (!coupon) return
+    if (this.data.subtotal < coupon.threshold) {
+      ui.toast('还差 ¥' + (coupon.threshold - this.data.subtotal).toFixed(2) + ' 可用')
+      return
+    }
+    this.store.selectCoupon(coupon)
+    this.setData({ couponVisible: false })
+    this.loadCart()
+    ui.toast('已使用 ' + coupon.title)
+  },
+
+  closeCoupon() {
+    this.setData({ couponVisible: false })
+  },
+
   clearCart() {
-    const self = this
-    wx.showModal({
+    const page = this
+    ui.confirm({
       title: '清空购物车',
-      content: '确定移除全部已选商品吗？',
-      success: function (res) {
-        if (!res.confirm) return
-        cartUtil.clearCart()
-        try { wx.removeStorageSync('suda_selected_coupon_v1') } catch (e) {}
-        self.loadCart()
-      }
-    })
+      message: '确定移除全部已选商品吗？'
+    }).then(function () {
+      page.store.clearCart()
+      page.loadCart()
+      ui.toast('购物车已清空')
+    }).catch(function () {})
   },
 
   goCheckout() {

@@ -1,38 +1,26 @@
+/**
+ * 收藏工具（兼容旧调用方式）
+ * 实际状态由 store/campus.js（Pinia 同构 store）维护。
+ */
+const { useCampusStore } = require('../store/campus')
+
 const FAVORITE_KEY = 'suda_favorites_v1'
-const SEED = ['m1', 'm3', 'm6']
 
 function getFavorites() {
-  try {
-    const value = wx.getStorageSync(FAVORITE_KEY)
-    if (Array.isArray(value)) return value
-  } catch (e) {}
-  try {
-    wx.setStorageSync(FAVORITE_KEY, SEED)
-  } catch (e) {}
-  return SEED.slice()
+  return useCampusStore().favorites
 }
 
 function isFavorite(id) {
-  return getFavorites().indexOf(id) > -1
+  return useCampusStore().isFavorite(id)
 }
 
 function toggleFavorite(id) {
-  const favorites = getFavorites()
-  const index = favorites.indexOf(id)
-  if (index > -1) {
-    favorites.splice(index, 1)
-  } else {
-    favorites.push(id)
-  }
-  try {
-    wx.setStorageSync(FAVORITE_KEY, favorites)
-  } catch (e) {}
-  return favorites.indexOf(id) > -1
+  return useCampusStore().toggleFavorite(id)
 }
 
 module.exports = {
-  FAVORITE_KEY,
-  getFavorites,
-  isFavorite,
-  toggleFavorite
+  FAVORITE_KEY: FAVORITE_KEY,
+  getFavorites: getFavorites,
+  isFavorite: isFavorite,
+  toggleFavorite: toggleFavorite
 }

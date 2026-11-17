@@ -742,6 +742,16 @@
   line-height: 1.6;
 }
 
+.review-van-field {
+  width: 100% !important;
+  margin-top: 22rpx;
+  padding: 20rpx !important;
+  border-radius: 22rpx;
+  background: #ffffff !important;
+  font-size: 23rpx !important;
+  line-height: 1.6;
+}
+
 .review-placeholder {
   color: #b1b6ae;
 }

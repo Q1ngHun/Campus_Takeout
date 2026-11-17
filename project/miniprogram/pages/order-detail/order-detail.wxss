@@ -418,6 +418,23 @@ button.nav-share {
   padding: 2rpx 0;
 }
 
+.detail-van-steps {
+  padding: 8rpx 0 0;
+  background: transparent;
+  font-size: 22rpx;
+}
+
+.detail-van-steps .van-step__title {
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+.detail-van-steps .desc-class {
+  margin-top: 4rpx;
+  color: #9aa197;
+  font-size: 18rpx;
+}
+
 .timeline-item {
   display: flex;
   gap: 14rpx;

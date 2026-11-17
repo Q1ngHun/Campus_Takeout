@@ -314,6 +314,42 @@ a {
   box-shadow: 0 0 0 3px rgba(139, 183, 44, 0.13);
 }
 
+.stage-live.offline {
+  background: #c79a7b;
+  box-shadow: 0 0 0 3px rgba(199, 154, 123, 0.13);
+}
+
+.api-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: 10px;
+  background: rgba(24, 33, 26, 0.07);
+  color: #7d857d;
+  font-size: 6.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.api-pill i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #b7a798;
+}
+
+.api-pill.online {
+  color: #4b6416;
+  background: rgba(139, 183, 44, 0.16);
+}
+
+.api-pill.online i {
+  background: #8bb72c;
+  box-shadow: 0 0 0 2px rgba(139, 183, 44, 0.15);
+}
+
 .stage-line {
   flex: 1;
   height: 1px;

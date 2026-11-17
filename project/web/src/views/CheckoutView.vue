@@ -63,7 +63,7 @@ function chooseCoupon(coupon) {
   couponSheet.value = false
 }
 
-function submit() {
+async function submit() {
   if (submitting.value) return
   if (!cartItems.value.length) {
     toast('购物车是空的')
@@ -74,28 +74,30 @@ function submit() {
     return
   }
   submitting.value = true
-  const order = createOrder({
-    shopId: cartShop.value.id,
-    shopName: cartShop.value.name,
-    shopCover: cartShop.value.cover,
-    statusNote: `${deliveryTime.value} · ${address.value.detail}`,
-    total: cartTotal.value,
-    itemCount: cartItems.value.reduce((sum, item) => sum + item.qty, 0),
-    address: address.value.detail,
-    remark: remark.value,
-    payMethod: payMethod.value,
-    items: cartItems.value.map((item) => ({
-      name: item.name,
-      spec: item.spec,
-      qty: item.qty,
-      price: item.price,
-      image: item.image
-    }))
-  })
-  toast('下单成功，商家正在准备')
-  setTimeout(() => {
+  try {
+    const order = await createOrder({
+      shopId: cartShop.value.id,
+      shopName: cartShop.value.name,
+      shopCover: cartShop.value.cover,
+      statusNote: `${deliveryTime.value} · ${address.value.detail}`,
+      total: cartTotal.value,
+      itemCount: cartItems.value.reduce((sum, item) => sum + item.qty, 0),
+      address: address.value.detail,
+      remark: remark.value,
+      payMethod: payMethod.value,
+      items: cartItems.value.map((item) => ({
+        name: item.name,
+        spec: item.spec,
+        qty: item.qty,
+        price: item.price,
+        image: item.image
+      }))
+    })
+    toast('下单成功，商家正在准备')
     router.replace(`/order/${order.id}?success=1`)
-  }, 550)
+  } finally {
+    submitting.value = false
+  }
 }
 </script>
 

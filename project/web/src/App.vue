@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import TabBar from './components/TabBar.vue'
 import { cartCount, cartShop, cartTotal, state } from './store'
@@ -8,6 +8,10 @@ const route = useRoute()
 const router = useRouter()
 const screen = ref(null)
 const isTab = computed(() => Boolean(route.meta.tab))
+
+onMounted(() => {
+  state.bootstrap()
+})
 
 watch(
   () => route.fullPath,
@@ -73,8 +77,11 @@ function goCart() {
 
     <main class="stage">
       <div class="stage-label">
-        <span class="stage-live"></span>
+        <span class="stage-live" :class="{ offline: !state.apiOnline }"></span>
         <span>LIVE PROTOTYPE</span>
+        <span class="api-pill" :class="{ online: state.apiOnline }">
+          <i></i>{{ state.apiOnline ? 'AXIOS · PINIA · API' : state.apiLoading ? 'SYNCING API' : 'LOCAL FALLBACK' }}
+        </span>
         <span class="stage-line"></span>
         <span>390 × 844</span>
       </div>

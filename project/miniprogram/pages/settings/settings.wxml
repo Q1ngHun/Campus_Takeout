@@ -38,7 +38,7 @@
           <text class="setting-name">订单通知</text>
           <text class="setting-desc">骑手接单、送达提醒</text>
         </view>
-        <switch checked="{{notify}}" color="#b9e83e" data-field="notify" bindchange="toggle" />
+        <van-switch checked="{{notify}}" active-color="#b9e83e" size="22px" data-field="notify" bind:change="toggle" />
       </view>
       <view class="row-line"></view>
       <view class="setting-row">
@@ -49,7 +49,7 @@
           <text class="setting-name">声音与振动</text>
           <text class="setting-desc">新消息提示音</text>
         </view>
-        <switch checked="{{sound}}" color="#b9e83e" data-field="sound" bindchange="toggle" />
+        <van-switch checked="{{sound}}" active-color="#b9e83e" size="22px" data-field="sound" bind:change="toggle" />
       </view>
       <view class="row-line"></view>
       <view class="setting-row">
@@ -60,7 +60,7 @@
           <text class="setting-name">个性化推荐</text>
           <text class="setting-desc">根据口味推荐店铺</text>
         </view>
-        <switch checked="{{personalized}}" color="#b9e83e" data-field="personalized" bindchange="toggle" />
+        <van-switch checked="{{personalized}}" active-color="#b9e83e" size="22px" data-field="personalized" bind:change="toggle" />
       </view>
     </view>
   </view>
@@ -76,7 +76,7 @@
           <text class="setting-name">位置权限</text>
           <text class="setting-desc">用于推荐附近的校园好味</text>
         </view>
-        <switch checked="{{location}}" color="#b9e83e" data-field="location" bindchange="toggle" />
+        <van-switch checked="{{location}}" active-color="#b9e83e" size="22px" data-field="location" bind:change="toggle" />
       </view>
       <view class="row-line"></view>
       <view class="setting-row" bindtap="clearCache">
@@ -101,6 +101,48 @@
         </view>
         <image class="row-arrow" src="/assets/icons/chevron-right.svg" />
       </view>
+    </view>
+  </view>
+
+  <view class="settings-group">
+    <view class="group-label">后端联调 · AXIOS + PINIA</view>
+    <view class="group-card">
+      <view class="setting-row">
+        <view class="setting-icon mint-bg">
+          <image src="/assets/icons/refresh.svg" />
+        </view>
+        <view class="setting-copy">
+          <text class="setting-name">远程接口</text>
+          <text class="setting-desc">关闭后仅使用本地示例数据</text>
+        </view>
+        <van-switch checked="{{useRemote}}" active-color="#b9e83e" size="22px" bind:change="toggleRemote" />
+      </view>
+      <view class="row-line"></view>
+      <view class="setting-row" bindtap="editApiBase">
+        <view class="setting-icon lime-bg">
+          <image src="/assets/icons/spark.svg" />
+        </view>
+        <view class="setting-copy">
+          <text class="setting-name">接口地址</text>
+          <text class="setting-desc">{{apiBase}}</text>
+        </view>
+        <image class="row-arrow" src="/assets/icons/chevron-right.svg" />
+      </view>
+      <view class="row-line"></view>
+      <view class="setting-row">
+        <view class="setting-icon sand-bg">
+          <image src="/assets/icons/check.svg" />
+        </view>
+        <view class="setting-copy">
+          <text class="setting-name">连接状态</text>
+          <text class="setting-desc">{{apiError || (lastSyncAt ? '最近同步 ' + lastSyncAt : '尚未同步')}}</text>
+        </view>
+        <van-tag round color="{{apiOnline ? '#18211a' : '#e7e5de'}}" text-color="{{apiOnline ? '#d7ff5e' : '#8a9189'}}">{{apiOnline ? 'ONLINE' : 'OFFLINE'}}</van-tag>
+      </view>
+    </view>
+    <view class="api-actions">
+      <van-button size="small" round custom-class="api-test-btn" loading="{{testing}}" bind:click="testConnection">测试连接</van-button>
+      <van-button size="small" round plain custom-class="api-refresh-btn" bind:click="reload">重新同步</van-button>
     </view>
   </view>
 
@@ -139,4 +181,25 @@
     <text>校园宿达 · 把好吃的送到楼下</text>
     <text>MADE FOR CAMPUS · 2026</text>
   </view>
+
+  <van-popup z-index="{{1000}}" show="{{apiEditorVisible}}" position="bottom" round bind:close="closeApiEditor">
+    <view class="api-editor">
+      <text class="api-editor-title">接口地址</text>
+      <text class="api-editor-desc">默认 {{defaultApiBase}} · 修改后会立即用 axios 重连</text>
+      <van-field
+        value="{{apiDraft}}"
+        border="{{true}}"
+        placeholder="http://localhost:8080/api"
+        custom-class="api-editor-field"
+        bind:change="onApiDraftChange"
+      />
+      <view class="api-editor-actions">
+        <view class="api-editor-ghost" bindtap="resetApiBase">恢复默认</view>
+        <view class="api-editor-primary" bindtap="saveApiBase">保存并重连</view>
+      </view>
+    </view>
+  </van-popup>
+
+  <van-dialog id="van-dialog" z-index="{{1000}}" />
+  <van-toast id="van-toast" />
 </view>

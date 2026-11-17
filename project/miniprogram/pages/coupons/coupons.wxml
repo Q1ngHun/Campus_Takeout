@@ -60,7 +60,7 @@
       <view class="ticket-right">
         <view class="ticket-head">
           <view class="ticket-title">{{item.title}}</view>
-          <view class="ticket-type">{{item.type}}</view>
+          <van-tag round custom-class="coupon-type-tag" color="#18211a" text-color="#d7ff5e">{{item.type}}</van-tag>
         </view>
         <text class="ticket-desc">{{item.desc}}</text>
         <text class="ticket-scope">{{item.scope}}</text>
@@ -92,7 +92,7 @@
   <view class="coupon-rule">
     <view class="rule-head">
       <text class="rule-title">使用说明</text>
-      <text class="rule-sub">RULES</text>
+      <text class="rule-sub">{{dataSource === 'remote' ? 'API SYNCED' : 'RULES'}}</text>
     </view>
     <text class="rule-line">· 优惠券仅限校园宿达平台使用，不可折现</text>
     <text class="rule-line">· 单笔订单限用一张，不与其他优惠叠加</text>
@@ -100,4 +100,7 @@
   </view>
 
   <view class="coupons-space"></view>
+
+  <van-dialog id="van-dialog" z-index="{{1000}}" />
+  <van-toast id="van-toast" />
 </view>

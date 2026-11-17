@@ -16,7 +16,7 @@
     <view class="header-actions">
       <view class="location" bindtap="goLocation">
         <image src="/assets/icons/pin.svg" />
-        <text>北苑 · 7号楼</text>
+        <text>{{location}}</text>
         <image class="chevron" src="/assets/icons/chevron-down.svg" />
       </view>
       <view class="bell" bindtap="goNotifications">
@@ -39,6 +39,16 @@
       <image src="/assets/icons/scan.svg" />
     </view>
   </view>
+
+  <van-notice-bar
+    wx:if="{{noticeText}}"
+    custom-class="home-notice"
+    left-icon="volume-o"
+    scrollable="{{false}}"
+    text="{{noticeText}}"
+    background="#eef7d6"
+    color="#3d4a1f"
+  />
 
   <view class="hero-card fade-up">
     <view class="hero-glow"></view>
@@ -171,7 +181,7 @@
 
   <view class="feed-end">
     <view class="end-line"></view>
-    <text>END · 今日好味已加载</text>
+    <text>{{apiOnline ? 'API 已连接 · ' + dataSource : '本地示例数据 · 启动后端可自动切换'}}</text>
     <view class="end-line"></view>
   </view>
 
@@ -191,4 +201,18 @@
       <image src="/assets/icons/arrow.svg" />
     </view>
   </view>
+
+  <van-action-sheet
+    z-index="{{1000}}"
+    show="{{locationVisible}}"
+    actions="{{locationActions}}"
+    title="选择校园收货点"
+    cancel-text="取消"
+    bind:select="onSelectLocation"
+    bind:close="closeLocation"
+    bind:cancel="closeLocation"
+  />
+
+  <van-dialog id="van-dialog" z-index="{{1000}}" />
+  <van-toast id="van-toast" />
 </view>

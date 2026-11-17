@@ -5,22 +5,16 @@
     <view class="search-back" bindtap="goBack">
       <image src="/assets/icons/chevron-left.svg" />
     </view>
-    <view class="search-box">
-      <image class="search-icon" src="/assets/icons/search.svg" />
-      <input
-        class="search-input"
-        value="{{keyword}}"
-        placeholder="搜店铺、美食或口味"
-        placeholder-class="search-placeholder"
-        confirm-type="search"
-        bindinput="onInput"
-        bindconfirm="doSearch"
-        autofocus="{{true}}"
-      />
-      <view class="clear-btn" wx:if="{{keyword}}" bindtap="clearInput">
-        <image src="/assets/icons/close.svg" />
-      </view>
-    </view>
+    <van-search
+      value="{{keyword}}"
+      shape="round"
+      background="transparent"
+      placeholder="搜店铺、美食或口味"
+      custom-class="search-vant"
+      bind:change="onSearchChange"
+      bind:search="doSearch"
+      bind:clear="clearInput"
+    />
     <text class="cancel" bindtap="goBack">取消</text>
   </view>
 
@@ -99,12 +93,16 @@
     <view class="results-head">
       <view>
         <text class="results-title">{{searched ? '搜索结果' : '正在搜索'}}</text>
-        <text class="results-sub" wx:if="{{searched}}">找到 {{resultCount}} 个相关结果</text>
+        <text class="results-sub" wx:if="{{searched}}">找到 {{resultCount}} 个相关结果 · {{dataSource === 'remote' ? 'API 实时' : '本地'}}</text>
       </view>
       <view class="results-filter">
         <text>综合</text>
         <image src="/assets/icons/chevron-down.svg" />
       </view>
+    </view>
+
+    <view class="search-loading" wx:if="{{searching}}">
+      <van-loading size="18px" color="#18211a">搜索中…</van-loading>
     </view>
 
     <view class="results-list" wx:if="{{results.length}}">
@@ -153,4 +151,7 @@
       <view class="foot-line"></view>
     </view>
   </block>
+
+  <van-dialog id="van-dialog" z-index="{{1000}}" />
+  <van-toast id="van-toast" />
 </view>
